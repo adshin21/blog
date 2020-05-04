@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react';
 
-function App() {
+import { 
+  MainLayout 
+} from './components/Layout';
+
+import { 
+  Router, 
+  Switch, 
+  Route 
+} from 'react-router-dom';
+
+import { 
+  createBrowserHistory
+ } from 'history';
+
+import { 
+  CircularProgress 
+} from '@material-ui/core';
+
+import LogInPage from './pages/LogInPage';
+import SignUpPage from './pages/SignUpPage';
+
+export const history = createBrowserHistory();
+
+const HomePage = React.lazy(() => import('./pages/HomePage'));
+
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router history={history}>
+      <Switch>
+        <Route exact path="/login" component={LogInPage} />
+        <Route exact path="/signup" component={SignUpPage} />
+        <MainLayout>
+          <Suspense fallback={<CircularProgress />}>
+            <Route exact path="/">
+              <HomePage />
+            </Route>
+
+          </Suspense>
+        </MainLayout>
+      </Switch>
+    </Router>
   );
-}
+};
 
 export default App;
