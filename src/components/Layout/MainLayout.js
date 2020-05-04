@@ -21,13 +21,11 @@ const MainLayout = (props) => {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={2}>
+      <Grid container>
         <Grid item xs={12}>
           <Header />
         </Grid>
-        <Grid item>
-          <Container style={{textAlign:"center"}}>{children}</Container>
-        </Grid>
+          {children}
         <Grid item xs={12}>
           <Footer />
         </Grid>

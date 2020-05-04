@@ -37,7 +37,6 @@ const App = () => {
             <Route exact path="/">
               <HomePage />
             </Route>
-
           </Suspense>
         </MainLayout>
       </Switch>

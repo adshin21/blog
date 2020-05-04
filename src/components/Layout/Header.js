@@ -138,7 +138,7 @@ const Header = () => {
   );
 
   return (
-    <div className={classes.grow}>
+    <div className={classes.grow} style={{ marginBottom: "32px"}}>
       <AppBar position="static">
         <Toolbar>
           <Typography className={classes.title} variant="h5" noWrap>
