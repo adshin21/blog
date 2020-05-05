@@ -15,9 +15,9 @@ const HomePage = () => {
         alignItems="center"
       >
         <HomePageCard title="Agadfas dasdf asdf asdf as" />
+        {/* <HomePageCard />
         <HomePageCard />
-        <HomePageCard />
-        <HomePageCard />
+        <HomePageCard /> */}
       </Grid>
     </>
   );
