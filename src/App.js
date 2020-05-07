@@ -14,6 +14,7 @@ export const history = createBrowserHistory();
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const CreatePage = React.lazy(() => import('./pages/CreateBlogPage'));
+const BlogPostPage = React.lazy(() => import('./pages/BlogPostPage'));
 
 const App = () => {
   return (
@@ -21,12 +22,15 @@ const App = () => {
       <Switch>
         <Route exact path="/login" component={LogInPage} />
         <Route exact path="/signup" component={SignUpPage} />
+        
         <MainLayout>
           <Suspense fallback={<CircularProgress />}>
             <Route exact path="/" component={HomePage} />
             <Route exact path="/create" component={CreatePage} />
+            <Route exact path="/blogpost" component={BlogPostPage} />
           </Suspense>
         </MainLayout>
+
       </Switch>
     </Router>
   );

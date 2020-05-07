@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -51,17 +52,19 @@ const formats = [
   'video',
 ];
 
-const Editor = ({ content, handleChange, placeholder }) => {
+const Editor = ({ content, handleChange, placeholder, theme, readOnly }) => {
   const styles = useStyles();
   return (
     <div className={styles.root}>
       <ReactQuill
+        theme={theme || 'snow'}
         value={content}
         onChange={handleChange}
         modules={modules}
         formats={formats}
         bounds={'.app'}
         placeholder={placeholder}
+        readOnly={ readOnly || false }
       />
     </div>
   );
