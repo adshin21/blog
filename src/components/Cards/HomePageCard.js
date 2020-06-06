@@ -2,95 +2,84 @@ import React, { useState } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 import {
+  Link,
   Grid,
   Card,
   CardActionArea,
-  CardMedia,
   CardContent,
-  IconButton,
   Typography,
 } from '@material-ui/core';
 
-
 import moment from 'moment';
 
-import {
-  ThumbUp as ThumbUpIcon,
-  Person as PersonIcon,
-} from '@material-ui/icons';
+import { history } from '../../App';
 
+// import { ThumbUp as ThumbUpIcon, Person as PersonIcon } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     minWidth: 600,
+    maxWidth: 600,
   },
   details: {
     display: 'flex',
     flexDirection: 'column',
+    width: '100%',
   },
   content: {
     flex: '1 0 auto',
   },
-  cover: {
-    width: 151,
-  },
   cardActionArea: {
     display: 'block',
-    width: 151,
+  },
+  footer: {
+    maxWidth: '570px',
+    marginRight: '30px',
+    marginLeft: '15px',
+    marginBottom: '10px',
   },
 }));
 
 const HomePageCard = ({
-  title = 'Not specfied adfasd dslafksdjfasdkj asdlfkjas;dfklja salskdfjak;l sj;asdf',
-  tag = 'Seg Tree, Bit Masking, DP',
-  date = '2020-03-01T18:30:00.000Z',
-  user = 'adshin21'
+  title,
+  slug,
+  tag,
+  date,
+  author = 'anonymous',
 }) => {
   const classes = useStyles();
-  const theme = useTheme();
+  // const theme = useTheme();
+  const preventDefault = (event) => event.preventDefault();
 
-  console.log(moment('2020-03-01T18:30:00.000Z').fromNow());
   return (
     <Grid item style={{ marginBottom: '16px' }}>
       <Card className={classes.root}>
-        <CardActionArea className={classes.cardActionArea}>
-          <CardMedia
-            className={classes.cover}
-            component="img"
-            src="https://picsum.photos/500/500"
-            title="Live from space album cover"
-          />
-        </CardActionArea>
         <div className={classes.details}>
           <CardContent className={classes.content}>
-            <CardActionArea style={{ display: 'block' }}>
-              <div style={{ width: 400 }}>
-                <Typography component="h5" variant="h5" noWrap={true}>
+            <CardActionArea onClick={() => history.push(`blogpost/${slug}`)}>
+              <Typography component="h5" variant="h5">
+                {/* <Link href="#" onClick={preventDefault} color="inherit"> */}
                   {title}
-                </Typography>
-                <Typography variant="subtitle1" color="textSecondary">
-                  {tag}
-                </Typography>
-                <Typography variant="subtitle2" color="textSecondary">
-                  {moment(date).fromNow()}
-                </Typography>
-              </div>
+                {/* </Link> */}
+              </Typography>
             </CardActionArea>
-          </CardContent>
-          <Grid container direction="row" justify="space-between" alignItems="flex-start">
-            <Grid item>
-              <IconButton aria-label="previous">
-                <ThumbUpIcon />
-              </IconButton>
-              {<b>11</b>}
-            </Grid>
 
+            <Typography variant="subtitle1" color="textSecondary">
+              {tag}
+            </Typography>
+          </CardContent>
+
+          <Grid container direction="row" justify="space-between" className={classes.footer}>
             <Grid item>
-              <IconButton aria-label="previous">
-                <PersonIcon />
-              </IconButton>
-              {<b>{user}</b>}
+              <Typography variant="subtitle2" color="textSecondary">
+                {moment(date).fromNow()}
+              </Typography>
+            </Grid>
+            <Grid item style={{ overflow: 'hidden' }}>
+              <Typography variant="subtitle2" color="textSecondary">
+                {author}
+              </Typography>
             </Grid>
           </Grid>
         </div>

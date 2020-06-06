@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
+
+import hljs from 'highlight.js';
+import 'highlight.js/styles/darcula.css';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -17,11 +20,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 const modules = {
+  syntax: {
+    highlight: text => hljs.highlightAuto(text).value,
+  },  
   toolbar: [
     [{ header: '1' }, { header: '2' }, { font: [] }],
     [{ size: [] }],
-    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
     [{ script: 'sub' }, { script: 'super' }],
     [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
     ['link', 'image', 'video'],
@@ -43,6 +50,7 @@ const formats = [
   'underline',
   'strike',
   'blockquote',
+  'code-block',
   'script',
   'list',
   'bullet',
@@ -57,7 +65,7 @@ const Editor = ({ content, handleChange, placeholder, theme, readOnly }) => {
   return (
     <div className={styles.root}>
       <ReactQuill
-        theme={theme || 'snow'}
+        theme={'snow'}
         value={content}
         onChange={handleChange}
         modules={modules}

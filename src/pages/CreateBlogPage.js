@@ -85,8 +85,6 @@ const CreateBlogPage = () => {
     settags(event.target.value);
   };
 
-  console.log(content, tags, title);
-
   const handleEditorChange = (content, delta, source, editor) => {
     const htmlText = editor.getHTML();
     const deltaText = editor.getContents();
@@ -104,8 +102,10 @@ const CreateBlogPage = () => {
       delta: delta,
     };
 
-    const res = await axios.post("http://localhost:8000/api/request/", form);
-    setData(res.data);
+    console.log(content)
+    console.log(delta)
+    // const res = await axios.post("http://localhost:8000/api/request/", form);
+    // setData(res.data);
   };
 
   const classes = useStyles();

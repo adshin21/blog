@@ -1,11 +1,7 @@
 import React, { Suspense } from 'react';
-
 import { MainLayout } from './components/Layout';
-
 import { Router, Switch, Route } from 'react-router-dom';
-
 import { createBrowserHistory } from 'history';
-
 import { CircularProgress } from '@material-ui/core';
 
 import LogInPage from './pages/LogInPage';
@@ -27,7 +23,7 @@ const App = () => {
           <Suspense fallback={<CircularProgress />}>
             <Route exact path="/" component={HomePage} />
             <Route exact path="/create" component={CreatePage} />
-            <Route exact path="/blogpost" component={BlogPostPage} />
+            <Route exact path="/blogpost/:slug" component={BlogPostPage} />
           </Suspense>
         </MainLayout>
 

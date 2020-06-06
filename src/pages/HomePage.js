@@ -1,12 +1,25 @@
-import React from 'react';
-import { Typography, Grid, CssBaseline } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { Grid } from '@material-ui/core';
 import HomePageCard from '../components/Cards/HomePageCard';
 
+import {
+  getPostList 
+} from '../shared/HomePage';
+
 const HomePage = () => {
-  console.log('Hello');
+  
+  const [posts, setPost] = useState({ results: [] });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getPostList();
+      setPost(res.data);
+    };
+    fetchData();
+  }, []);
+  
   return (
     <>
-      {/* <CssBaseline /> */}
       <Grid
         overflow="hidden"
         container
@@ -14,10 +27,20 @@ const HomePage = () => {
         justify="center"
         alignItems="center"
       >
-        <HomePageCard title="Agadfas dasdf asdf asdf as" />
-        {/* <HomePageCard />
-        <HomePageCard />
-        <HomePageCard /> */}
+        
+        {
+          posts.results.map( (post, idx) => (
+            <HomePageCard 
+              key={idx}
+              title={post.title}
+              tag={post.tags}
+              slug={post.slug}
+              author={post.author}
+              date={post.published_at} 
+            />
+            ) 
+          )
+        }
       </Grid>
     </>
   );

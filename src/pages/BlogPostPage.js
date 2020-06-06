@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container } from '@material-ui/core';
-import { Editor } from '../components/Editor';
+import { useParams } from 'react-router-dom';
 
-// import {
-//   Container
-// } from '@material-ui/core';
+import {
+  getPostDetail
+} from '../shared/HomePage';
 
-const BlogPostPage = ({ content }) => {
+const BlogPostPage = () => {
+  const params = useParams();
+  const [post, setPost] = useState({})
+  useEffect(() => {
+    const fetchdata = async () => {
+      const res = await getPostDetail(params['slug']);
+      setPost(res.data);
+    };
+    fetchdata();
+  }, []);
+
   return (
     <Container maxWidth="md">
-      <div dangerouslySetInnerHTML={{ __html: content }} /> 
-    </Container>
+      <div dangerouslySetInnerHTML={{ __html: post.content }} /> 
+    </Container>  
   );
 };
 
