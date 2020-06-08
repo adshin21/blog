@@ -1,46 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { Grid } from '@material-ui/core';
-import HomePageCard from '../components/Cards/HomePageCard';
+import { history } from '../App';
 
-import {
-  getPostList 
-} from '../shared/HomePage';
+import Pagination from '@material-ui/lab/Pagination';
+
+import HomePageCard from '../components/Cards/HomePageCard';
+import { useParams } from 'react-router-dom';
+
+import { getPostList } from '../shared/HomePage';
 
 const HomePage = () => {
-  
   const [posts, setPost] = useState({ results: [] });
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const params = useParams();
+  useEffect(() => {
+    if (params.pagenumber){
+      setPageNumber(params.pagenumber);
+    } 
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getPostList();
+      const res = await getPostList(pageNumber);
       setPost(res.data);
     };
     fetchData();
-  }, []);
-  
+  }, [pageNumber]);
+
+  const handleChange =  (event , value) => {
+    event.preventDefault();
+    setPageNumber(value);
+    history.push(`/posts/page/${value}`);
+  }
+
   return (
     <>
-      <Grid
-        overflow="hidden"
-        container
-        direction="column"
-        justify="center"
-        alignItems="center"
-      >
-        
-        {
-          posts.results.map( (post, idx) => (
-            <HomePageCard 
-              key={idx}
-              title={post.title}
-              tag={post.tags}
-              slug={post.slug}
-              author={post.author}
-              date={post.published_at} 
-            />
-            ) 
-          )
-        }
+      <Grid overflow="hidden" container direction="column" justify="center" alignItems="center">
+        {posts.results.map((post, idx) => (
+          <HomePageCard
+            key={idx}
+            title={post.title}
+            tag={post.tags}
+            slug={post.slug}
+            author={post.author}
+            date={post.published_at}
+          />
+        ))}
+        <Pagination 
+          count={(Math.floor((posts.count + 9) / 10))} 
+          defaultPage={1} 
+          boundaryCount={2}
+          page={+pageNumber} 
+          onChange={handleChange}
+        />{' '}
       </Grid>
     </>
   );

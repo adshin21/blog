@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Redirect } from 'react-router-dom';
 
 import {
-  Link,
+  Breadcrumbs,
+  Chip,
   Grid,
   Card,
   CardActionArea,
@@ -39,15 +41,16 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '15px',
     marginBottom: '10px',
   },
+  tag: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  chip: {
+    margin: theme.spacing(0.25),
+  },
 }));
 
-const HomePageCard = ({
-  title,
-  slug,
-  tag,
-  date,
-  author = 'anonymous',
-}) => {
+const HomePageCard = ({ title, slug, tag = [], date, author = 'anonymous' }) => {
   const classes = useStyles();
   // const theme = useTheme();
   const preventDefault = (event) => event.preventDefault();
@@ -57,17 +60,19 @@ const HomePageCard = ({
       <Card className={classes.root}>
         <div className={classes.details}>
           <CardContent className={classes.content}>
-            <CardActionArea onClick={() => history.push(`blogpost/${slug}`)}>
+            <CardActionArea onClick={() => history.push(`/blogpost/${slug}`)}>
               <Typography component="h5" variant="h5">
-                {/* <Link href="#" onClick={preventDefault} color="inherit"> */}
-                  {title}
-                {/* </Link> */}
+                {title}
               </Typography>
             </CardActionArea>
 
-            <Typography variant="subtitle1" color="textSecondary">
-              {tag}
-            </Typography>
+            <div className={classes.tag}>
+              {tag.map((e, id) => (
+                <Typography variant="subtitle2" color="textSecondary" className={classes.chip} key={"tag" + id}>
+                  {e.name}
+                </Typography>
+              ))}
+            </div>
           </CardContent>
 
           <Grid container direction="row" justify="space-between" className={classes.footer}>
