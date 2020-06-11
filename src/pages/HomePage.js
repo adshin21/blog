@@ -7,7 +7,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import HomePageCard from '../components/Cards/HomePageCard';
 import { useParams } from 'react-router-dom';
 
-import { getPostList } from '../shared/HomePage';
+import { getPostList } from '../shared/endpoints';
 
 const HomePage = () => {
   const [posts, setPost] = useState({ results: [] });

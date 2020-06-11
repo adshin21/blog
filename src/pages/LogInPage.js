@@ -1,30 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { login } from '../redux/actions/authActions';
+import { useSelector, useDispatch } from 'react-redux';
 
+import jwt from 'jsonwebtoken';
+
+import { getToken } from '../shared/endpoints';
+import { history } from '../App';
 import {
   Avatar,
   Button,
+  Backdrop,
+  CircularProgress,
   CssBaseline,
   TextField,
-  FormControlLabel,
-  Checkbox,
   Link,
   Grid,
   Box,
   Container,
-  Typography
+  Typography,
 } from '@material-ui/core';
 
-import {
-  LockOutlined as LockOutlinedIcon,
-} from '@material-ui/icons';
+import { LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
 
-import { 
-  makeStyles 
-} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import Copyright from '../components/Copyright';
-
-
+import { LOGGED_IN } from '../redux/actions/types';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -44,13 +45,51 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 const LogIn = () => {
   const classes = useStyles();
 
+  let [username, setUsername] = useState('');
+  let [password, setPassword] = useState('');
+  let [backdrop, setBackDrop] = useState(false);
+
+
+  const userState = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let form = {
+      username: username,
+      password: password,
+    };
+
+    setBackDrop(true);
+    const res = await getToken(form);
+
+    if (res.status === 200) {
+      dispatch({
+        type: LOGGED_IN,
+        user: jwt.decode(res.data.access, process.env.REACT_APP_VERIFYING_KEY),
+      });
+      login(res.data.access, res.data.refresh);
+      setBackDrop(false);
+      history.push('/');
+    }
+  };
+
+  if(userState.authData.auth)
+    history.push('/');
   return (
     <Container component="main" maxWidth="xs">
+      <Backdrop className={classes.backdrop} open={backdrop}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -59,17 +98,19 @@ const LogIn = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label="Username or Email Address"
             name="email"
             autoComplete="email"
             autoFocus
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <TextField
             variant="outlined"
@@ -81,11 +122,13 @@ const LogIn = () => {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth
@@ -114,6 +157,6 @@ const LogIn = () => {
       </Box>
     </Container>
   );
-}
+};
 
 export default LogIn;

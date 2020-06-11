@@ -5,6 +5,7 @@ import {
 } from '@material-ui/core/styles';
 
 import { history } from '../../App';
+
 import {
   AppBar,
   Toolbar,
@@ -13,16 +14,23 @@ import {
   InputBase,
   Menu,
   MenuItem,
-  Button
-} from '@material-ui/core'
+  Button,
+} from '@material-ui/core';
+
+import { 
+  useSelector, 
+  useDispatch,
+} from 'react-redux';
+
+import { logout } from '../../redux/actions/authActions';
+import { LOGGED_OUT } from '../../redux/actions/types';
 
 import {
   Search as SearchIcon,
   MoreVert as MoreIcon,
   VpnKey as VpnKeyIcon,
-  AddBoxOutlined as AddBoxOutlinedIcon
+  AddBoxOutlined as AddBoxOutlinedIcon,
 } from '@material-ui/icons';
-
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -94,14 +102,15 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
   },
-
 }));
 
 const Header = () => {
   const classes = useStyles();
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const userState = useSelector((state) => state);
+  const dispatch = useDispatch();
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -122,7 +131,7 @@ const Header = () => {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      <MenuItem onClick={() => history.push('/create')}>
         <IconButton aria-label="Add New Article" color="inherit">
           <AddBoxOutlinedIcon />
         </IconButton>
@@ -134,11 +143,18 @@ const Header = () => {
         </IconButton>
         <p>Login</p>
       </MenuItem>
+
+      <MenuItem>
+        <IconButton aria-label="Log Out" color="inherit">
+          <VpnKeyIcon />
+        </IconButton>
+        <p>Log Out</p>
+      </MenuItem>
     </Menu>
   );
 
   return (
-    <div className={classes.grow} style={{ marginBottom: "32px"}}>
+    <div className={classes.grow} style={{ marginBottom: '32px' }}>
       <AppBar position="static">
         <Toolbar>
           <Typography className={classes.title} variant="h5" noWrap>
@@ -159,8 +175,37 @@ const Header = () => {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button color="inherit" style={{ fontWeight: 600}}>Add Article</Button>
-            <Button color="inherit" style={{ fontWeight: 600}} onClick={ () => history.push("/login")}>Login</Button>
+            <Button 
+              color="inherit" 
+              style={{ fontWeight: 600 }}
+              onClick={() => history.push('/create')}
+            >
+              Add Article
+            </Button>
+            { !userState.authData.auth ? (
+              <Button
+                color="inherit"
+                style={{ fontWeight: 600 }}
+                onClick={() => history.push('/login')}
+              >
+                Login
+              </Button>
+            ) : (
+              <Button
+                color="inherit"
+                style={{ fontWeight: 600 }}
+                onClick={() => {
+                  logout();
+                  dispatch({
+                    type: LOGGED_OUT
+                  });
+                  history.push('/')
+                  }
+                }
+              >
+                Log Out
+              </Button>
+            )}
           </div>
 
           <div className={classes.sectionMobile}>
@@ -179,6 +224,6 @@ const Header = () => {
       {renderMobileMenu}
     </div>
   );
-}
+};
 
 export default Header;

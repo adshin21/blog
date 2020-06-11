@@ -14,9 +14,13 @@ import {
   Input,
   Select,
   Chip,
+  Backdrop,
+  CircularProgress,
 } from '@material-ui/core';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+
+import { postBlog } from '../shared/endpoints';
 
 import BlogPostPage from './BlogPostPage';
 
@@ -50,6 +54,10 @@ const useStyles = makeStyles((theme) => ({
   noLabel: {
     marginTop: theme.spacing(3),
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 const names = ['Array', 'String', 'Math', 'Dynamic Programming', 'Linked List', 'Tree'];
@@ -79,7 +87,8 @@ const CreateBlogPage = () => {
   let [delta, setDelta] = useState({});
   let [tags, settags] = useState([]);
   let [title, setTitle] = useState('');
-  let [data, setData] = useState('');
+  let [modal, setModal] = useState(true);
+  let [backdrop, setBackDrop] = useState(false);
 
   const handleChange = (event) => {
     settags(event.target.value);
@@ -93,31 +102,38 @@ const CreateBlogPage = () => {
   };
 
   const handleSubmit = async (e) => {
+    setBackDrop(true);
     e.preventDefault();
 
+    let new_tag = tags.map((e) => ({ name: e }));
     let form = {
       title: title,
-      tags: tags,
+      tags: new_tag,
       content: content,
       delta: delta,
     };
 
-    console.log(content)
-    console.log(delta)
-    // const res = await axios.post("http://localhost:8000/api/request/", form);
-    // setData(res.data);
+    const res = await postBlog(form);
+
+    if (res.status === 201) {
+      setBackDrop(false);
+    }
   };
 
   const classes = useStyles();
   const theme = useTheme();
 
-  if(data.length){
-    return <BlogPostPage content={data} />
-  }
+  // if(data.length){
+  //   return <BlogPostPage content={data} />
+  // }
+
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
       <div className={classes.paper}>
+        <Backdrop className={classes.backdrop} open={backdrop}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <Typography component="h1" variant="h5">
           Create Content
         </Typography>
@@ -136,7 +152,13 @@ const CreateBlogPage = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <Typography fontStyle="italic" variant="caption" display="block" color='error' gutterBottom={true}>
+          <Typography
+            fontStyle="italic"
+            variant="caption"
+            display="block"
+            color="error"
+            gutterBottom={true}
+          >
             caption text
           </Typography>{' '}
           <Editor

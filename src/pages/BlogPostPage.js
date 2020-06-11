@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Container } from '@material-ui/core';
+import { Container, CssBaseline } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 
-import {
-  getPostDetail
-} from '../shared/HomePage';
+import { getPostDetail } from '../shared/endpoints';
 
 const BlogPostPage = () => {
   const params = useParams();
   const [post, setPost] = useState({});
-  
+
+  console.log('Hello from BlogPage');
   useEffect(() => {
     const fetchdata = async () => {
       const res = await getPostDetail(params.slug);
@@ -19,9 +18,12 @@ const BlogPostPage = () => {
   }, []);
 
   return (
-    <Container maxWidth="md">
-      <div dangerouslySetInnerHTML={{ __html: post.content }} /> 
-    </Container>  
+    <>
+      <CssBaseline />
+      <Container maxWidth="md">
+        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+      </Container>
+    </>
   );
 };
 
