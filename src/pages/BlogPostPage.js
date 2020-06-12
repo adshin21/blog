@@ -8,7 +8,6 @@ const BlogPostPage = () => {
   const params = useParams();
   const [post, setPost] = useState({});
 
-  console.log('Hello from BlogPage');
   useEffect(() => {
     const fetchdata = async () => {
       const res = await getPostDetail(params.slug);

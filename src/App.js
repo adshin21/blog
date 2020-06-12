@@ -10,7 +10,6 @@ import Authenticated from './components/Authenticated';
 
 export const history = createBrowserHistory();
 
-
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const CreatePage = React.lazy(() => import('./pages/CreateBlogPage'));
 const BlogPostPage = React.lazy(() => import('./pages/BlogPostPage'));

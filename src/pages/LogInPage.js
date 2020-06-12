@@ -23,9 +23,10 @@ import {
 import { LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
 
 import { makeStyles } from '@material-ui/core/styles';
-
 import Copyright from '../components/Copyright';
 import { LOGGED_IN } from '../redux/actions/types';
+
+import TransitionsModal from '../components/TransitionsModal';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -57,7 +58,7 @@ const LogIn = () => {
   let [username, setUsername] = useState('');
   let [password, setPassword] = useState('');
   let [backdrop, setBackDrop] = useState(false);
-
+  let [modal, setModal] = useState(false);
 
   const userState = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -72,6 +73,7 @@ const LogIn = () => {
     setBackDrop(true);
     const res = await getToken(form);
 
+    console.log(res);
     if (res.status === 200) {
       dispatch({
         type: LOGGED_IN,
@@ -80,11 +82,26 @@ const LogIn = () => {
       login(res.data.access, res.data.refresh);
       setBackDrop(false);
       history.push('/');
+    } 
+    else {
+      setBackDrop(false);
+      setModal(true);
     }
   };
 
-  if(userState.authData.auth)
-    history.push('/');
+  if (userState.authData.auth) history.push('/');
+
+  if (modal) {
+    return (
+      <TransitionsModal
+        modal={true}
+        heading="Login Falied"
+        description="Please try after sometime"
+        setModal={setModal}
+      />
+    );
+  }
+
   return (
     <Container component="main" maxWidth="xs">
       <Backdrop className={classes.backdrop} open={backdrop}>
@@ -139,11 +156,11 @@ const LogIn = () => {
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
+            {/* <Grid item xs>
               <Link href="#" variant="body2">
                 Forgot password?
               </Link>
-            </Grid>
+            </Grid> */}
             <Grid item>
               <Link href="/signup" variant="body2">
                 {"Don't have an account? Sign Up"}
