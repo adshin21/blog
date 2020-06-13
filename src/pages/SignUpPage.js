@@ -45,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
 const SignUpPage = () => {
   const classes = useStyles();
 
+  const handleSubmit = event => {
+    console.log("Hello");
+  }
+  
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -55,7 +59,7 @@ const SignUpPage = () => {
         <Typography component="h1" variant="h5">
           Sign up
           </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -115,9 +119,9 @@ const SignUpPage = () => {
             </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="/login" variant="body2">
+              <Link href="#" variant="body2">
                 Already have an account? Sign in
-                </Link>
+              </Link>
             </Grid>
           </Grid>
         </form>

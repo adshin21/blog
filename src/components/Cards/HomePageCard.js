@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Redirect } from 'react-router-dom';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 
 import {
-  Breadcrumbs,
-  Chip,
   Grid,
   Card,
   CardActionArea,
@@ -52,9 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 const HomePageCard = ({ title, slug, tag = [], date, author = 'anonymous' }) => {
   const classes = useStyles();
-  // const theme = useTheme();
-  const preventDefault = (event) => event.preventDefault();
-
+  
   return (
     <Grid item style={{ marginBottom: '16px' }}>
       <Card className={classes.root}>

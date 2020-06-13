@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
@@ -8,7 +8,6 @@ import { logout } from './redux/actions/authActions';
 
 
 const Startup = (props) => {
-  const userState = useSelector((state) => state);
   const dispatch = useDispatch();
 
   useEffect(() => {

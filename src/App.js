@@ -23,13 +23,13 @@ const App = () => {
 
         <MainLayout>
           <Suspense fallback={<CircularProgress />}>
+            <Route path="/"><Redirect to='/posts/page/1' /></Route>
             <Authenticated exact path="/create" component={CreatePage} />
             <Route exact path="/blogpost/:slug" component={BlogPostPage} />
             <Route exact path="/posts/page/:pagenumber" component={HomePage} />
           </Suspense>
         </MainLayout>
-
-        <Route render={() => <Redirect to={{ pathname: '/posts/page/1' }} />} />
+        <Route path="*"><Redirect to='/posts/page/1' /></Route>
       </Switch>
     </Router>
   );

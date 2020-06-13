@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { login } from '../redux/actions/authActions';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -84,12 +84,14 @@ const LogIn = () => {
       history.push('/');
     } 
     else {
+      console.log(res);
       setBackDrop(false);
       setModal(true);
     }
   };
 
-  if (userState.authData.auth) history.push('/');
+  if (userState.authData.auth) 
+    history.push('/');
 
   if (modal) {
     return (

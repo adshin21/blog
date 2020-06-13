@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TransitionsModal = ({ heading, description, modal, setModal }) => {
   const classes = useStyles();
-  let [open, setOpen] = React.useState(false);
+  let [open, setOpen] = useState(false);
 
   useEffect(() => setOpen(modal), []);
 

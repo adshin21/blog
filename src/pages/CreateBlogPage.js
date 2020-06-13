@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Editor } from '../components/Editor';
-import axios from 'axios';
 
 import {
   Button,
@@ -19,10 +18,9 @@ import {
 } from '@material-ui/core';
 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-
 import { postBlog } from '../shared/endpoints';
-
-import BlogPostPage from './BlogPostPage';
+import TransitionsModal from '../components/TransitionsModal';
+import { history } from '../App';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -87,7 +85,7 @@ const CreateBlogPage = () => {
   let [delta, setDelta] = useState({});
   let [tags, settags] = useState([]);
   let [title, setTitle] = useState('');
-  let [modal, setModal] = useState(true);
+  let [modal, setModal] = useState(false);
   let [backdrop, setBackDrop] = useState(false);
 
   const handleChange = (event) => {
@@ -110,23 +108,34 @@ const CreateBlogPage = () => {
       title: title,
       tags: new_tag,
       content: content,
-      delta: delta,
+      delta: JSON.stringify(delta),
     };
 
     const res = await postBlog(form);
-
+    console.log(res.data);
     if (res.status === 201) {
       setBackDrop(false);
+      history.push(`/blogpost/${res.data.slug}`);
+    } 
+    else {
+      setBackDrop(false);
+      setModal(true);
     }
   };
 
   const classes = useStyles();
   const theme = useTheme();
 
-  // if(data.length){
-  //   return <BlogPostPage content={data} />
-  // }
-
+  if (modal) {
+    return (
+      <TransitionsModal
+        modal={true}
+        heading="Error in creation"
+        description="Please try after sometime"
+        setModal={setModal}
+      />
+    );
+  }
   return (
     <Container component="main" maxWidth="lg">
       <CssBaseline />
