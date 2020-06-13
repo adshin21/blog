@@ -8,8 +8,7 @@ export const getToken = async (form) => {
   catch (error){
     return { data: error.response.data, status: error.response.status };
   }
-
-}
+};
 
 export const getPostList = async (page=1) => {
   const res = await api.get(`posts/?page=${page}`);
@@ -30,4 +29,9 @@ export const postBlog = async (form) => {
   catch (error) {
     return { data: error.response.data, status: error.response.status };
   }
+}
+
+export const getRecommendation = async (form) => {
+  const res = await api.post(`posts/f/recommendation/`, form);
+  return { data: res.data, status: res.status };
 }

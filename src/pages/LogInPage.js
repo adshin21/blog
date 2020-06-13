@@ -73,7 +73,6 @@ const LogIn = () => {
     setBackDrop(true);
     const res = await getToken(form);
 
-    console.log(res);
     if (res.status === 200) {
       dispatch({
         type: LOGGED_IN,
@@ -84,7 +83,6 @@ const LogIn = () => {
       history.push('/');
     } 
     else {
-      console.log(res);
       setBackDrop(false);
       setModal(true);
     }

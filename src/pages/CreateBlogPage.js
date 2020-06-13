@@ -112,7 +112,6 @@ const CreateBlogPage = () => {
     };
 
     const res = await postBlog(form);
-    console.log(res.data);
     if (res.status === 201) {
       setBackDrop(false);
       history.push(`/blogpost/${res.data.slug}`);

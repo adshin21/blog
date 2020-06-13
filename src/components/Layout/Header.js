@@ -15,6 +15,7 @@ import {
   Menu,
   MenuItem,
   Button,
+  Link
 } from '@material-ui/core';
 
 import { 
@@ -112,6 +113,7 @@ const Header = () => {
   const userState = useSelector((state) => state);
   const dispatch = useDispatch();
 
+  // const preventDefault = (event) => event.preventDefault();
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
@@ -144,12 +146,12 @@ const Header = () => {
         <p>Login</p>
       </MenuItem>
 
-      <MenuItem>
+      {/* <MenuItem>
         <IconButton aria-label="Log Out" color="inherit">
           <VpnKeyIcon />
         </IconButton>
         <p>Log Out</p>
-      </MenuItem>
+      </MenuItem> */}
     </Menu>
   );
 
@@ -158,7 +160,9 @@ const Header = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography className={classes.title} variant="h5" noWrap>
-            <b>Aditya</b>
+            <Link onClick={() => history.push("/")} color="inherit">
+              <b>Home</b>
+            </Link>
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
