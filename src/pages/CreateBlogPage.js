@@ -58,7 +58,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const names = ['Array', 'String', 'Math', 'Dynamic Programming', 'Linked List', 'Tree'];
+const names = [
+  'array', 
+  'math', 
+  'linked list', 
+  '2-sat',
+  'binary search',
+  'bitmasks',
+  'brute force',
+  'combinatorics',
+  'constructive algorithm',
+  'data structures',
+  'dfs',
+  'divide and conquer',
+  'dp',
+  'dsu',
+  'fft',
+  'games',
+  'geometry',
+  'graphs',
+  'greedy',
+  'hashing',
+  'implementation',
+  'number theory',
+  'searching',
+  'sortings',
+  'strings',
+  'trees',
+  'two pointers',
+
+
+];
 
 function getStyles(name, tags, theme) {
   return {

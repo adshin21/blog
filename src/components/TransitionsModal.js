@@ -20,7 +20,7 @@ const TransitionsModal = ({ heading, description, modal, setModal }) => {
   const classes = useStyles();
   let [open, setOpen] = useState(false);
 
-  useEffect(() => setOpen(modal), []);
+  useEffect(() => setOpen(modal), [modal]);
 
   const handleClose = () => {
     setOpen(false);

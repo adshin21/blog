@@ -10,6 +10,16 @@ export const getToken = async (form) => {
   }
 };
 
+export const SignUp = async (form) => {
+  try{
+    const res = await api.post(`users/register/`, form);
+    return { data: res.data, status: res.status };
+  }
+  catch (error) {
+    return { data: error.response.data, status: error.response.status};
+  }
+}
+
 export const getPostList = async (page=1) => {
   const res = await api.get(`posts/?page=${page}`);
   return { data: res.data, status: res.status };

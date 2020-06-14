@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, CssBaseline, Grid, Typography } from '@material-ui/core';
+import { 
+  CssBaseline, 
+  Grid, 
+  Typography 
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useParams } from 'react-router-dom';
 import { getPostDetail } from '../shared/endpoints';
-import SimpleList from '../components/Recommendation';
 import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
@@ -37,7 +39,7 @@ const BlogPostPage = ({params, setParentPost}) => {
       setParentPost(res.data);
     };
     fetchdata();
-  }, []);
+  }, [params.slug, setParentPost]);
 
   const { tags, published_at } = post;
 

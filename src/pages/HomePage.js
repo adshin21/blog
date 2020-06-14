@@ -18,7 +18,7 @@ const HomePage = () => {
     if (params.pagenumber){
       setPageNumber(params.pagenumber);
     } 
-  }, []);
+  }, [params.pagenumber]);
 
   useEffect(() => {
     const fetchData = async () => {

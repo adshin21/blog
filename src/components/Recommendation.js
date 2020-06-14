@@ -28,12 +28,12 @@ const SimpleList = ({ tags = [], slug = '' }) => {
 
     if(tags.length)
       fetchData();
-  }, [slug]);
+  }, [slug, tags]);
 
 
-  // if (!spost.length) {
-  //   return <div>Nothing to show here.</div>;
-  // }
+  if (!spost.length) {
+    return <div>Nothing to show here.</div>;
+  }
 
   return (
     <div className={classes.root}>

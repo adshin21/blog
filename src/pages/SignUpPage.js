@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { history } from '../App';
 
 import {
   Avatar,
@@ -7,10 +9,16 @@ import {
   TextField,
   Link,
   Grid,
+  Backdrop,
+  CircularProgress,
   Box,
   Container,
   Typography
 } from '@material-ui/core';
+
+import { SignUp } from '../shared/endpoints';
+import TransitionsModal from '../components/TransitionsModal';
+
 
 import {
   LockOutlined as LockOutlinedIcon,
@@ -45,12 +53,53 @@ const useStyles = makeStyles((theme) => ({
 const SignUpPage = () => {
   const classes = useStyles();
 
-  const handleSubmit = event => {
-    console.log("Hello");
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [backdrop, setBackDrop] = useState(false);
+  const [modal, setModal] = useState(false);
+
+  const userState = useSelector(state => state);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let form = {
+      username: username,
+      email: email,
+      password: password,
+    }
+
+    setBackDrop(true);
+    const res = await SignUp(form);
+
+    if(res.status === 201){
+      setBackDrop(false);
+      history.push('/login');
+    }
+    else {
+      setBackDrop(false);
+      setModal(true);
+    }
   }
   
+  if(userState.authData.auth)
+    history.push('/');
+
+    if (modal) {
+      return (
+        <TransitionsModal
+          modal={true}
+          heading="SignUp Falied"
+          description="Please try after sometime and check the details"
+          setModal={setModal}
+        />
+      );
+    }
+
   return (
     <Container component="main" maxWidth="xs">
+      <Backdrop className={classes.backdrop} open={backdrop}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -61,7 +110,7 @@ const SignUpPage = () => {
           </Typography>
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <TextField
                 autoComplete="fname"
                 name="firstName"
@@ -69,19 +118,10 @@ const SignUpPage = () => {
                 required
                 fullWidth
                 id="firstName"
-                label="First Name"
+                label="Username"
+                value={username}
                 autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
+                onChange={e => setUsername(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -93,6 +133,8 @@ const SignUpPage = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -105,6 +147,8 @@ const SignUpPage = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
           </Grid>
@@ -117,9 +161,14 @@ const SignUpPage = () => {
           >
             Sign Up
             </Button>
-          <Grid container justify="flex-end">
+          <Grid container>
+            <Grid item xs>
+              <Link href="/" variant="body2">
+                Go to Home
+              </Link>
+            </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/login" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>

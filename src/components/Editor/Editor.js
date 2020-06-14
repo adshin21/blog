@@ -22,9 +22,11 @@ const useStyles = makeStyles((theme) => ({
 
 
 const modules = {
-  syntax: {
-    highlight: text => hljs.highlightAuto(text).value,
-  },  
+  // syntax: {
+    
+  //   highlight: text => hljs.highlightAuto(text).value,
+  // },
+  syntax: true,  
   toolbar: [
     [{ header: '1' }, { header: '2' }, { font: [] }],
     [{ size: [] }],
