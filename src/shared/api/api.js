@@ -24,7 +24,7 @@ api.interceptors.request.use(async (config) => {
 
         Cookies.remove('__access_token');
 
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/users/token/refresh/`, {
+        const res = await axios.post(process.env.REACT_APP_API_URL + 'users/token/refresh/', {
           refresh: refresh_token,
         });
         Cookies.set('__access_token', res.data.access);

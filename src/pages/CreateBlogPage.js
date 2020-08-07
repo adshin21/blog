@@ -86,8 +86,6 @@ const names = [
   'strings',
   'trees',
   'two pointers',
-
-
 ];
 
 function getStyles(name, tags, theme) {

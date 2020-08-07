@@ -28,7 +28,7 @@ const Startup = (props) => {
             Cookies.remove('__access_token');
 
             axios
-              .post(`${process.env.REACT_APP_API_URL}/users/token/refresh/`, {
+              .post(process.env.REACT_APP_API_URL + 'users/token/refresh/', {
                 refresh: refresh_token,
               })
               .then((res) => {

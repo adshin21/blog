@@ -11,7 +11,6 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  InputBase,
   Menu,
   MenuItem,
   Button,
@@ -27,7 +26,6 @@ import { logout } from '../../redux/actions/authActions';
 import { LOGGED_OUT } from '../../redux/actions/types';
 
 import {
-  Search as SearchIcon,
   MoreVert as MoreIcon,
   VpnKey as VpnKeyIcon,
   AddBoxOutlined as AddBoxOutlinedIcon,
@@ -164,7 +162,7 @@ const Header = () => {
               <b>Home</b>
             </Link>
           </Typography>
-          <div className={classes.search}>
+          {/* <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
@@ -176,7 +174,7 @@ const Header = () => {
               }}
               inputProps={{ 'aria-label': 'search' }}
             />
-          </div>
+          </div> */}
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <Button 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { login } from '../redux/actions/authActions';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -21,12 +21,17 @@ import {
 } from '@material-ui/core';
 
 import { LockOutlined as LockOutlinedIcon } from '@material-ui/icons';
-
 import { makeStyles } from '@material-ui/core/styles';
 import Copyright from '../components/Copyright';
 import { LOGGED_IN } from '../redux/actions/types';
 
 import TransitionsModal from '../components/TransitionsModal';
+
+import GoogleAuthForm from '../components/GoogleAuthForm';
+import GithubAuthForm from '../components/GithubAuthForm';
+
+import { useLocation } from "react-router-dom";
+import { getSocialToken } from '../shared/endpoints';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -50,6 +55,12 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
   },
+  social: {
+    margin: theme.spacing(1.2),
+  },
+  signin: {
+    alignItems: 'center',
+  }
 }));
 
 const LogIn = () => {
@@ -60,6 +71,7 @@ const LogIn = () => {
   let [backdrop, setBackDrop] = useState(false);
   let [modal, setModal] = useState(false);
 
+  const location = useLocation();
   const userState = useSelector((state) => state);
   const dispatch = useDispatch();
 
@@ -81,15 +93,59 @@ const LogIn = () => {
       login(res.data.access, res.data.refresh);
       setBackDrop(false);
       history.push('/');
-    } 
-    else {
+    } else {
       setBackDrop(false);
       setModal(true);
     }
   };
 
-  if (userState.authData.auth) 
-    history.push('/');
+  useEffect(() => {
+    const getCode = async () => {
+      let url_data = location.search.split("?code=")
+      if(url_data.length >= 2 && url_data[1]){
+        setBackDrop(true);
+        const res = await getSocialToken({ code: url_data[1], provider: "github"});
+        
+        if (res.status === 200) {
+          dispatch({
+            type: LOGGED_IN,
+            user: jwt.decode(res.data.access, process.env.REACT_APP_VERIFYING_KEY),
+          });
+          login(res.data.access, res.data.refresh);
+          setBackDrop(false);
+          history.push('/');
+        } else {
+          setBackDrop(false);
+          setModal(true);
+        }
+      }
+    }
+    getCode();
+  }, []);
+
+
+  const responseGoogle = async (response) => {
+    setBackDrop(true);
+    const res = await getSocialToken({ code: response.tokenObj.access_token, provider: "google"});
+    if (res.status === 200) {
+      dispatch({
+        type: LOGGED_IN,
+        user: jwt.decode(res.data.access, process.env.REACT_APP_VERIFYING_KEY),
+      });
+      login(res.data.access, res.data.refresh);
+      setBackDrop(false);
+      history.push('/');
+    } else {
+      setBackDrop(false);
+      setModal(true);
+    }
+  }
+
+  const onFailure = (res) => {
+    setModal(true);
+  }
+
+  if (userState.authData.auth) history.push('/');
 
   if (modal) {
     return (
@@ -142,11 +198,8 @@ const LogIn = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {/* <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          /> */}
           <Button
+            className={classes.signin}
             type="submit"
             fullWidth
             variant="contained"
@@ -156,11 +209,12 @@ const LogIn = () => {
             Sign In
           </Button>
           <Grid container>
-            {/* <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
+          <Grid item xs>
+              <Link href="/" variant="body2">
+                Go to Home
               </Link>
-            </Grid> */}
+            </Grid>
+            
             <Grid item>
               <Link href="/signup" variant="body2">
                 {"Don't have an account? Sign Up"}
@@ -168,6 +222,30 @@ const LogIn = () => {
             </Grid>
           </Grid>
         </form>
+
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          className={classes.social}
+        >
+          <Grid item>
+            <Typography component="h5" variant="h5">
+              Or
+            </Typography>
+          </Grid>
+          <Grid item className={classes.social}>
+            <GoogleAuthForm 
+              responseGoogle={responseGoogle}
+              onFailure={onFailure}
+            />
+          </Grid>
+
+          <Grid item className={classes.social}>
+            <GithubAuthForm />
+          </Grid>
+        </Grid>
       </div>
       <Box mt={8}>
         <Copyright />

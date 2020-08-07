@@ -10,6 +10,8 @@ export const getToken = async (form) => {
   }
 };
 
+
+
 export const SignUp = async (form) => {
   try{
     const res = await api.post(`users/register/`, form);
@@ -43,5 +45,11 @@ export const postBlog = async (form) => {
 
 export const getRecommendation = async (form) => {
   const res = await api.post(`posts/f/recommendation/`, form);
+  return { data: res.data, status: res.status };
+}
+
+
+export const getSocialToken = async (form) => {
+  const res = await api.post('users/social/token/', form);
   return { data: res.data, status: res.status };
 }
