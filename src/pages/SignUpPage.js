@@ -29,6 +29,7 @@ import {
 } from '@material-ui/core/styles';
 
 import Copyright from '../components/Copyright';
+import useForm from '../hooks/useForm';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,20 +54,50 @@ const useStyles = makeStyles((theme) => ({
 const SignUpPage = () => {
   const classes = useStyles();
 
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const stateSchema = {
+    username: { value: "", error: "" },
+    email: { value: "", error: "" },
+    password: { value: "", error: "" },
+    confirmPassword: { value: "", error: "" }
+  };
+
+  const stateValidatorSchema = {
+    username: {
+      required: true,
+      validator: {
+        func: value => /^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$/.test(value),
+        error: "Invalid username format.\n\nAllowed characters { A-Z, a-z, 0-9, '.', '_' }"
+      }
+    },
+    email: {
+      required: true,
+      validator: {
+        func: value => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value),
+        error: "Invalid email format."
+      }
+    },
+    password: {
+      required: true,
+      validator: {
+        func: value => /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/.test(value),
+        error: "Invalid password. It should consists characters, numbers and special character and minimum length should be 6"
+      }
+    },
+    confirmPassword: {
+      required: true,
+      validator: {
+        func: value => values['password'] === value,
+        error: "Password not match."
+      }
+    },
+  };
+
   const [backdrop, setBackDrop] = useState(false);
   const [modal, setModal] = useState(false);
 
   const userState = useSelector(state => state);
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    let form = {
-      username: username,
-      email: email,
-      password: password,
-    }
+
+  const handleSubmit = async (form) => {
 
     setBackDrop(true);
     const res = await SignUp(form);
@@ -80,7 +111,18 @@ const SignUpPage = () => {
       setModal(true);
     }
   }
+
+  const {
+    values,
+    errors,
+    dirty,
+    handleOnChange,
+    handleOnSubmit,
+    disable
+  } = useForm(stateSchema, stateValidatorSchema, handleSubmit);
   
+  const { username, email, password, confirmPassword } = values;
+
   if(userState.authData.auth)
     history.push('/');
 
@@ -108,20 +150,25 @@ const SignUpPage = () => {
         <Typography component="h1" variant="h5">
           Sign up
           </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
+        <form className={classes.form} noValidate onSubmit={handleOnSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 autoComplete="fname"
-                name="firstName"
+                name="username"
                 variant="outlined"
                 required
                 fullWidth
-                id="firstName"
+                id="username"
                 label="Username"
                 value={username}
                 autoFocus
-                onChange={e => setUsername(e.target.value)}
+                onChange={handleOnChange}
+                // FormHelperTextProps={{
+                //   className: classes.helperText
+                // }}
+                error={(errors.username && dirty.username)}
+                helperText={(errors.username && dirty.username) ? errors.username : ""}
               />
             </Grid>
             <Grid item xs={12}>
@@ -134,7 +181,9 @@ const SignUpPage = () => {
                 name="email"
                 autoComplete="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={handleOnChange}
+                error={(errors.email && dirty.email)}
+                helperText={(errors.email && dirty.email) ? errors.email : ""}
               />
             </Grid>
             <Grid item xs={12}>
@@ -148,16 +197,35 @@ const SignUpPage = () => {
                 id="password"
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handleOnChange}
+                error={(errors.password && dirty.password)}
+                helperText={(errors.password && dirty.password) ? errors.password : ""}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="confirm-password"
+                value={confirmPassword}
+                onChange={handleOnChange}
+                error={(errors.confirmPassword && dirty.confirmPassword)}
+                helperText={(errors.confirmPassword && dirty.confirmPassword) ? errors.confirmPassword : ""}
               />
             </Grid>
           </Grid>
           <Button
+            className={classes.submit}
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
+            disabled={disable}
           >
             Sign Up
             </Button>

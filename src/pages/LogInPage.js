@@ -33,6 +33,9 @@ import GithubAuthForm from '../components/GithubAuthForm';
 import { useLocation } from "react-router-dom";
 import { getSocialToken } from '../shared/endpoints';
 
+import useForm from '../hooks/useForm';
+import axios from 'axios';
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -66,22 +69,30 @@ const useStyles = makeStyles((theme) => ({
 const LogIn = () => {
   const classes = useStyles();
 
-  let [username, setUsername] = useState('');
-  let [password, setPassword] = useState('');
-  let [backdrop, setBackDrop] = useState(false);
-  let [modal, setModal] = useState(false);
+  const stateSchema = {
+    username: { value: "", error: "" },
+    password: { value: "", error: "" },
+  };
 
-  const location = useLocation();
-  const userState = useSelector((state) => state);
-  const dispatch = useDispatch();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    let form = {
-      username: username,
-      password: password,
-    };
+  const stateValidatorSchema = {
+    username: {
+      required: true,
+      validator: {
+        func: value => /^[a-zA-Z]+$/.test(value) || /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value),
+        error: "Invalid username format."
+      }
+    },
+    password: {
+      required: true,
+      validator: {
+        func: value => /^(?!\s*$).+/.test(value),
+        error: "Invalid password."
+      }
+    },
+  };
 
+  const handleSubmit = async (form) => {
     setBackDrop(true);
     const res = await getToken(form);
 
@@ -99,13 +110,34 @@ const LogIn = () => {
     }
   };
 
+
+  const {
+    values,
+    errors,
+    dirty,
+    handleOnChange,
+    handleOnSubmit,
+    disable
+  } = useForm(stateSchema, stateValidatorSchema, handleSubmit);
+
+  const { username, password } = values;
+
+  let [backdrop, setBackDrop] = useState(false);
+  let [modal, setModal] = useState(false);
+
+  const location = useLocation();
+  const userState = useSelector((state) => state);
+  const dispatch = useDispatch();
+
+
   useEffect(() => {
+    // const source = axios.CancelToken.source();
+
     const getCode = async () => {
       let url_data = location.search.split("?code=")
       if(url_data.length >= 2 && url_data[1]){
         setBackDrop(true);
         const res = await getSocialToken({ code: url_data[1], provider: "github"});
-        
         if (res.status === 200) {
           dispatch({
             type: LOGGED_IN,
@@ -114,7 +146,8 @@ const LogIn = () => {
           login(res.data.access, res.data.refresh);
           setBackDrop(false);
           history.push('/');
-        } else {
+        } 
+        else {
           setBackDrop(false);
           setModal(true);
         }
@@ -171,19 +204,21 @@ const LogIn = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
+        <form className={classes.form} noValidate onSubmit={handleOnSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            id="email"
+            id="username"
             label="Username or Email Address"
-            name="email"
-            autoComplete="email"
+            name="username"
+            autoComplete="username"
             autoFocus
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleOnChange}
+            error={(errors.username && dirty.username)}
+            helperText={(errors.username && dirty.username) ? errors.username : ""}
           />
           <TextField
             variant="outlined"
@@ -196,14 +231,16 @@ const LogIn = () => {
             id="password"
             autoComplete="current-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleOnChange}
+            error={(errors.password && dirty.password)}
+            helperText={(errors.password && dirty.password) ? errors.password : ""}
           />
           <Button
-            className={classes.signin}
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
+            disabled={disable}
             className={classes.submit}
           >
             Sign In
