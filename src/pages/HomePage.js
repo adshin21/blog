@@ -24,6 +24,7 @@ const HomePage = () => {
     const fetchData = async () => {
       const res = await getPostList(pageNumber);
       setPost(res.data);
+      window.scrollTo(0,0);
     };
     fetchData();
   }, [pageNumber]);

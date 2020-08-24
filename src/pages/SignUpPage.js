@@ -30,6 +30,7 @@ import {
 
 import Copyright from '../components/Copyright';
 import useForm from '../hooks/useForm';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,6 +54,11 @@ const useStyles = makeStyles((theme) => ({
 
 const SignUpPage = () => {
   const classes = useStyles();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  
+  const onClickDismiss = key => () => { 
+    closeSnackbar(key);
+  };
 
   const stateSchema = {
     username: { value: "", error: "" },
@@ -94,6 +100,8 @@ const SignUpPage = () => {
 
   const [backdrop, setBackDrop] = useState(false);
   const [modal, setModal] = useState(false);
+  let [usernameError, setUsernameError] = useState(false);
+  let [emailError, setEmailError] = useState(false);
 
   const userState = useSelector(state => state);
 
@@ -105,10 +113,35 @@ const SignUpPage = () => {
     if(res.status === 201){
       setBackDrop(false);
       history.push('/login');
+      enqueueSnackbar("Successfully signed up", { 
+        variant: "success", 
+        autoHideDuration: 3000,
+        anchorOrigin: {
+          horizontal: 'centre',
+          vertical: 'bottom',
+        },
+        action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+      });
     }
     else {
+      for(let res_key in res.data){
+
+        if(res_key === "username"){
+          setUsernameError(true);
+        }
+
+        if(res_key === "email"){
+          setEmailError(true);
+        }
+        for(let msg of res.data[res_key]){
+          enqueueSnackbar(msg, { 
+            variant: "error", 
+            autoHideDuration: 9000,
+            action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+          });
+        }
+      }
       setBackDrop(false);
-      setModal(true);
     }
   }
 
@@ -167,7 +200,7 @@ const SignUpPage = () => {
                 // FormHelperTextProps={{
                 //   className: classes.helperText
                 // }}
-                error={(errors.username && dirty.username)}
+                error={(errors.username && dirty.username) || usernameError}
                 helperText={(errors.username && dirty.username) ? errors.username : ""}
               />
             </Grid>
@@ -182,7 +215,7 @@ const SignUpPage = () => {
                 autoComplete="email"
                 value={email}
                 onChange={handleOnChange}
-                error={(errors.email && dirty.email)}
+                error={(errors.email && dirty.email) || emailError}
                 helperText={(errors.email && dirty.email) ? errors.email : ""}
               />
             </Grid>

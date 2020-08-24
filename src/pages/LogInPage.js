@@ -30,11 +30,11 @@ import TransitionsModal from '../components/TransitionsModal';
 import GoogleAuthForm from '../components/GoogleAuthForm';
 import GithubAuthForm from '../components/GithubAuthForm';
 
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import { getSocialToken } from '../shared/endpoints';
 
 import useForm from '../hooks/useForm';
-import axios from 'axios';
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -63,32 +63,53 @@ const useStyles = makeStyles((theme) => ({
   },
   signin: {
     alignItems: 'center',
-  }
+  },
 }));
 
 const LogIn = () => {
   const classes = useStyles();
 
-  const stateSchema = {
-    username: { value: "", error: "" },
-    password: { value: "", error: "" },
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const onClickDismiss = (key) => () => {
+    closeSnackbar(key);
   };
 
+  const loginSuccessSnackbar = () => {
+    enqueueSnackbar("Successfully Logged In", {
+      variant: "success",
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'center'
+      },
+      autoHideDuration: 3000,
+      action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+    });
+  }
+
+  const stateSchema = {
+    username: { value: '', error: '' },
+    password: { value: '', error: '' },
+  };
 
   const stateValidatorSchema = {
     username: {
       required: true,
       validator: {
-        func: value => /^[a-zA-Z]+$/.test(value) || /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value),
-        error: "Invalid username format."
-      }
+        func: (value) =>
+          /^[a-zA-Z]+$/.test(value) ||
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+            value,
+          ),
+        error: 'Invalid username format.',
+      },
     },
     password: {
       required: true,
       validator: {
-        func: value => /^(?!\s*$).+/.test(value),
-        error: "Invalid password."
-      }
+        func: (value) => /^(?!\s*$).+/.test(value),
+        error: 'Invalid password.',
+      },
     },
   };
 
@@ -103,22 +124,38 @@ const LogIn = () => {
       });
       login(res.data.access, res.data.refresh);
       setBackDrop(false);
+      loginSuccessSnackbar();
       history.push('/');
     } else {
       setBackDrop(false);
-      setModal(true);
+      
+      for (let res_key in res.data) {
+        if(typeof(res.data[res_key]) === "object"){
+          for (let msg of res.data[res_key]) {
+            enqueueSnackbar(msg, {
+              variant: "error",
+              autoHideDuration: 9000,
+              action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+            });
+          }
+        }
+        else{
+            enqueueSnackbar(res.data[res_key], {
+              variant: "error",
+              autoHideDuration: 9000,
+              action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+            });
+        }
+        
+      }
     }
   };
 
-
-  const {
-    values,
-    errors,
-    dirty,
-    handleOnChange,
-    handleOnSubmit,
-    disable
-  } = useForm(stateSchema, stateValidatorSchema, handleSubmit);
+  const { values, errors, dirty, handleOnChange, handleOnSubmit, disable } = useForm(
+    stateSchema,
+    stateValidatorSchema,
+    handleSubmit,
+  );
 
   const { username, password } = values;
 
@@ -129,15 +166,13 @@ const LogIn = () => {
   const userState = useSelector((state) => state);
   const dispatch = useDispatch();
 
-
   useEffect(() => {
-    // const source = axios.CancelToken.source();
 
     const getCode = async () => {
-      let url_data = location.search.split("?code=")
-      if(url_data.length >= 2 && url_data[1]){
+      let url_data = location.search.split('?code=');
+      if (url_data.length >= 2 && url_data[1]) {
         setBackDrop(true);
-        const res = await getSocialToken({ code: url_data[1], provider: "github"});
+        const res = await getSocialToken({ code: url_data[1], provider: 'github' });
         if (res.status === 200) {
           dispatch({
             type: LOGGED_IN,
@@ -145,21 +180,20 @@ const LogIn = () => {
           });
           login(res.data.access, res.data.refresh);
           setBackDrop(false);
+          loginSuccessSnackbar();
           history.push('/');
-        } 
-        else {
+        } else {
           setBackDrop(false);
           setModal(true);
         }
       }
-    }
+    };
     getCode();
   }, []);
 
-
   const responseGoogle = async (response) => {
     setBackDrop(true);
-    const res = await getSocialToken({ code: response.tokenObj.access_token, provider: "google"});
+    const res = await getSocialToken({ code: response.tokenObj.access_token, provider: 'google' });
     if (res.status === 200) {
       dispatch({
         type: LOGGED_IN,
@@ -168,15 +202,16 @@ const LogIn = () => {
       login(res.data.access, res.data.refresh);
       setBackDrop(false);
       history.push('/');
+      loginSuccessSnackbar();
     } else {
       setBackDrop(false);
       setModal(true);
     }
-  }
+  };
 
   const onFailure = (res) => {
     setModal(true);
-  }
+  };
 
   if (userState.authData.auth) history.push('/');
 
@@ -217,8 +252,8 @@ const LogIn = () => {
             autoFocus
             value={username}
             onChange={handleOnChange}
-            error={(errors.username && dirty.username)}
-            helperText={(errors.username && dirty.username) ? errors.username : ""}
+            error={errors.username && dirty.username}
+            helperText={errors.username && dirty.username ? errors.username : ''}
           />
           <TextField
             variant="outlined"
@@ -232,8 +267,8 @@ const LogIn = () => {
             autoComplete="current-password"
             value={password}
             onChange={handleOnChange}
-            error={(errors.password && dirty.password)}
-            helperText={(errors.password && dirty.password) ? errors.password : ""}
+            error={errors.password && dirty.password}
+            helperText={errors.password && dirty.password ? errors.password : ''}
           />
           <Button
             type="submit"
@@ -246,12 +281,12 @@ const LogIn = () => {
             Sign In
           </Button>
           <Grid container>
-          <Grid item xs>
+            <Grid item xs>
               <Link href="/" variant="body2">
                 Go to Home
               </Link>
             </Grid>
-            
+
             <Grid item>
               <Link href="/signup" variant="body2">
                 {"Don't have an account? Sign Up"}
@@ -273,10 +308,7 @@ const LogIn = () => {
             </Typography>
           </Grid>
           <Grid item className={classes.social}>
-            <GoogleAuthForm 
-              responseGoogle={responseGoogle}
-              onFailure={onFailure}
-            />
+            <GoogleAuthForm responseGoogle={responseGoogle} onFailure={onFailure} />
           </Grid>
 
           <Grid item className={classes.social}>

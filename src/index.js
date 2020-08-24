@@ -5,13 +5,24 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import Startup from './Startup';
+import { SnackbarProvider } from 'notistack';
+
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Startup>
-        <App />
-      </Startup>
+      <SnackbarProvider
+        maxSnack={5}
+        anchorOrigin={{
+          horizontal: 'right',
+          vertical: 'bottom',
+        }}
+        preventDuplicate={true}
+      >
+        <Startup>
+            <App />
+        </Startup>
+      </SnackbarProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root'),
