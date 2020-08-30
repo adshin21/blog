@@ -188,7 +188,7 @@ const CreateBlogPage = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <Typography
+          {/* <Typography
             fontStyle="italic"
             variant="caption"
             display="block"
@@ -196,7 +196,7 @@ const CreateBlogPage = () => {
             gutterBottom={true}
           >
             caption text
-          </Typography>{' '}
+          </Typography>{' '} */}
           <Editor
             content={content}
             handleChange={handleEditorChange}

@@ -14,20 +14,16 @@ const HomePage = () => {
   const [pageNumber, setPageNumber] = useState(1);
 
   const params = useParams();
-  useEffect(() => {
-    if (params.pagenumber){
-      setPageNumber(params.pagenumber);
-    } 
-  }, [params.pagenumber]);
-
+  
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getPostList(pageNumber);
+      const res = await getPostList(params.pageNumber || pageNumber);
+      setPageNumber(params.pagenumber);
       setPost(res.data);
       window.scrollTo(0,0);
     };
     fetchData();
-  }, [pageNumber]);
+  }, [params.pagenumber]);
 
   const handleChange =  (event , value) => {
     event.preventDefault();
