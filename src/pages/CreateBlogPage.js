@@ -195,7 +195,7 @@ const CreateBlogPage = () => {
             color="error"
             gutterBottom={true}
           >
-            caption textg
+            caption text
           </Typography>{' '} */}
           <Editor
             content={content}
