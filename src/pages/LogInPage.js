@@ -126,7 +126,8 @@ const LogIn = () => {
       setBackDrop(false);
       loginSuccessSnackbar();
       history.push('/');
-    } else {
+    } 
+    else {
       setBackDrop(false);
       
       for (let res_key in res.data) {
@@ -167,7 +168,6 @@ const LogIn = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
     const getCode = async () => {
       let url_data = location.search.split('?code=');
       if (url_data.length >= 2 && url_data[1]) {
