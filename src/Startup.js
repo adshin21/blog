@@ -16,12 +16,15 @@ const Startup = (props) => {
       const refresh_token = Cookies.get('__refresh_token');
 
       if (refresh_token) {
+        console.log("IFFF")
         try {
           const data = jwt.verify(access_token, process.env.REACT_APP_VERIFYING_KEY);
           dispatch({
             type: LOGGED_IN,
             user: data,
           });
+
+          console.log("Try one");
         } catch (error) {
           try {
             const data = jwt.verify(refresh_token, process.env.REACT_APP_VERIFYING_KEY);
@@ -37,6 +40,7 @@ const Startup = (props) => {
                   type: LOGGED_IN,
                   user: jwt.decode(res.data.access, process.env.REACT_APP_VERIFYING_KEY),
                 });
+                console.log("Inside api call")
               })
               .catch((err) => {
                 logout();
@@ -44,16 +48,19 @@ const Startup = (props) => {
                   type: LOGGED_OUT,
                 });
               });
+              console.log("Try catch one");
           }
           catch (err) {
             logout();
             dispatch({
               type: LOGGED_OUT
             });
+            console.log("Catch two");
           }
         }
       } 
       else {
+        console.log("else");
         logout();
         dispatch({
           type: LOGGED_OUT,

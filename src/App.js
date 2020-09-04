@@ -23,7 +23,7 @@ const App = () => {
         <MainLayout>
           <Suspense fallback={<CircularProgress />}>
             <Route exact path="/"><Redirect to='/posts/page/1' /></Route>
-            <Authenticated exact path="/create" component={CreatePage} />
+            <Authenticated exact path="/create" comp={CreatePage} />
             <Route exact path="/blogpost/:slug" component={BlogPost} />
             <Route exact path="/posts/page/:pagenumber" component={HomePage} />
           </Suspense>
