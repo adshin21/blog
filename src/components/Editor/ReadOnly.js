@@ -3,6 +3,10 @@ import parser from 'html-react-parser';
 
 const ReadOnly = ({ data }) => {
 
+  const sanatize = (word) => {
+    return word.replace("<br>", "");
+  }
+
   const renderBlock = ({ type, data }) => {
     let content = '';
     switch (type) {
@@ -12,7 +16,7 @@ const ReadOnly = ({ data }) => {
           {
             className: 'ce-header',
           },
-          data.text,
+          sanatize(data.text),
         );
         content = <div style={{ height: 'fit-content' }}>{element}</div>;
         break;
@@ -21,7 +25,7 @@ const ReadOnly = ({ data }) => {
           <ul className={`"cdx-block" "cdx-list" "cdx-list--${data.style}"`}>
             {data.items.map((item) => (
               <li key={Math.random()} className="cdx-list__item">
-                {item}
+                {sanatize(item)}
               </li>
             ))}
           </ul>
@@ -39,7 +43,7 @@ const ReadOnly = ({ data }) => {
               height={data.height}
               allowFullScreen
             ></iframe>
-            <div className="embed-tool__caption">{data.caption}</div>
+            <div className="embed-tool__caption">{sanatize(data.caption)}</div>
           </div>
         );
         break;
@@ -58,7 +62,7 @@ const ReadOnly = ({ data }) => {
           <div className="cdx-block image-tool image-tool--filled">
             <div className="image-tool__image">
               <img className="image-tool__image-picture" src={data.file.url} alt="Cool pix"></img>
-              <span className="embed-tool__caption" style={{ textAlign: 'right', marginBottom: '5px' }}>{data.caption}</span>
+              <span className="embed-tool__caption" style={{ textAlign: 'right', marginBottom: '5px' }}>{sanatize(data.caption)}</span>
             </div>
           </div>
         );
@@ -75,7 +79,7 @@ const ReadOnly = ({ data }) => {
               style={{ width: "100%", height: data.height }}
             >
             </iframe>
-            <div className="embed-tool__caption" style={{ textAlign: 'center', marginTop: '-25px' }}>{data.caption}</div>
+            <div className="embed-tool__caption" style={{ textAlign: 'center' }}>{sanatize(data.caption)}</div>
           </div>
         );
         break;
@@ -97,7 +101,7 @@ const ReadOnly = ({ data }) => {
                           <td className="tc-table__cell" key={Math.random()}>
                             <div className="tc-table__area" key={Math.random()}>
                               <div className="tc-table__inp" key={Math.random()}>
-                                {col}
+                                {sanatize(col)}
                               </div>
                             </div>
                           </td>
