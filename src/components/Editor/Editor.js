@@ -3,7 +3,6 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import 'react-quill/dist/quill.bubble.css';
 
-import hljs from 'highlight.js';
 import 'highlight.js/styles/darcula.css';
 
 import { makeStyles } from '@material-ui/core/styles';

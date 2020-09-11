@@ -16,11 +16,11 @@ api.interceptors.request.use(async (config) => {
 
   if (refresh_token) {
     try {
-      const data = jwt.verify(access_token, process.env.REACT_APP_VERIFYING_KEY);
+      jwt.verify(access_token, process.env.REACT_APP_VERIFYING_KEY);
       config.headers['Authorization'] = `Bearer ${access_token}`;
     } catch (e) {
       try {
-        const data = jwt.verify(refresh_token, process.env.REACT_APP_VERIFYING_KEY);
+        jwt.verify(refresh_token, process.env.REACT_APP_VERIFYING_KEY);
 
         Cookies.remove('__access_token');
 

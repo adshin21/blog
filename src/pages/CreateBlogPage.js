@@ -1,56 +1,32 @@
-import React, { useState } from 'react';
-import { Editor } from '../components/Editor';
-
-import {
-  Button,
-  CssBaseline,
-  TextField,
-  FormControl,
-  Container,
-  Typography,
-  MenuItem,
-  InputLabel,
-  Input,
-  Select,
-  Chip,
+import React, { useState, useRef } from 'react';
+import Editor from '../components/Editor/_Editor';
+import { 
+  Container, 
+  Paper, 
+  Button, 
+  Grid,
   Backdrop,
   CircularProgress,
 } from '@material-ui/core';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+import { EDITOR_JS_TOOLS } from '../components/Editor/constants';
+
 import { postBlog } from '../shared/endpoints';
 import TransitionsModal from '../components/TransitionsModal';
 import { history } from '../App';
+import CreateMultiSelect from '../components/SelectTag'; // eslint-disable-line
+
+import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    // minWidth: 120,
-    // maxWidth: 300,
-    width: '100%',
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: 2,
-  },
-  noLabel: {
-    marginTop: theme.spacing(3),
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    fontSize: '1.0rem',
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
@@ -58,100 +34,105 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const names = [
-  'array', 
-  'math', 
-  'linked list', 
-  '2-sat',
-  'binary search',
-  'bitmasks',
-  'brute force',
-  'combinatorics',
-  'constructive algorithm',
-  'data structures',
-  'dfs',
-  'divide and conquer',
-  'dp',
-  'dsu',
-  'fft',
-  'games',
-  'geometry',
-  'graphs',
-  'greedy',
-  'hashing',
-  'implementation',
-  'number theory',
-  'searching',
-  'sortings',
-  'strings',
-  'trees',
-  'two pointers',
-];
-
-function getStyles(name, tags, theme) {
-  return {
-    fontWeight:
-      tags.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
 const CreateBlogPage = () => {
-  let [content, setContent] = useState('');
-  let [delta, setDelta] = useState({});
-  let [tags, settags] = useState([]);
-  let [title, setTitle] = useState('');
-  let [modal, setModal] = useState(false);
+
+  let editor = useRef(null);
   let [backdrop, setBackDrop] = useState(false);
+  let [modal, setModal] = useState(false);
 
-  const handleChange = (event) => {
-    settags(event.target.value);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  
+  const onClickDismiss = (key) => () => {
+    closeSnackbar(key);
   };
 
-  const handleEditorChange = (content, delta, source, editor) => {
-    const htmlText = editor.getHTML();
-    const deltaText = editor.getContents();
-    setContent(htmlText);
-    setDelta(deltaText);
+  const fetchTitleContent = (data) => {
+    let slice_index = -1;
+    for(let block_id in data.blocks){
+      const type = data.blocks[block_id].type;
+
+      if(type === 'paragraph' || type === 'header'){
+        slice_index = block_id;
+        break;
+      }
+    }
+
+    if(slice_index === -1){
+      return { status: "false", title: "" , content: "" };
+    }
+    
+    let heading = data.blocks.splice(slice_index, 1);
+    let title = heading[0].data.text;
+    let content = data;
+    return { status: "true", title , content };
+  }
+
+  const onReady = async () => {
+    // https://editorjs.io/configuration#editor-modifications-callback
+    await editor.isReady;
+    console.log('Editor.js is ready to work!');
   };
 
-  const handleSubmit = async (e) => {
-    setBackDrop(true);
-    e.preventDefault();
+  // const onChange = () => {
+    // https://editorjs.io/configuration#editor-modifications-callback
+    // console.log("Now I know that Editor's content changed!");
+  // };
 
-    let new_tag = tags.map((e) => ({ name: e }));
-    let form = {
-      title: title,
-      tags: new_tag,
-      content: content,
-      delta: JSON.stringify(delta),
-    };
 
-    const res = await postBlog(form);
-    if (res.status === 201) {
-      setBackDrop(false);
-      history.push(`/blogpost/${res.data.slug}`);
-    } 
-    else {
-      setBackDrop(false);
-      setModal(true);
+  const onSave = async (e) => {
+    // https://editorjs.io/saving-data
+    try {
+      const outputData = await editor.save();
+      e.persist();
+
+
+      const { status, title, content } = fetchTitleContent(outputData);
+      
+
+      if(status === "false"){
+        enqueueSnackbar("You should provide a heading or a paragraph for title", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'right'
+          },
+          autoHideDuration: 8000,
+          action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+        });
+        return;
+      }
+
+
+      let form = {
+        title: title,
+        content: content,
+        tags: [{ "name": "random" }]
+      };
+
+
+      const res = await postBlog(form);
+      if (res.status === 201) {
+        setBackDrop(false);
+        enqueueSnackbar("Hurray!! Post Created", {
+          variant: "success",
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center'
+          },
+          autoHideDuration: 3000,
+          action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+        });
+        history.push(`/blogpost/${res.data.slug}`);
+      } else {
+        setBackDrop(false);
+        setModal(true);
+      }
+    } catch (e) {
+      console.log('Saving failed: ', e);
     }
   };
 
   const classes = useStyles();
-  const theme = useTheme();
 
   if (modal) {
     return (
@@ -163,83 +144,30 @@ const CreateBlogPage = () => {
       />
     );
   }
+
   return (
-    <Container component="main" maxWidth="lg">
-      <CssBaseline />
-      <div className={classes.paper}>
+    <Container maxWidth="md">
+      <Paper elevation={1} className={classes.paper}>
         <Backdrop className={classes.backdrop} open={backdrop}>
           <CircularProgress color="inherit" />
         </Backdrop>
-        <Typography component="h1" variant="h5">
-          Create Content
-        </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
-          <TextField
-            error={false}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="title"
-            label="Title"
-            name="title"
-            autoComplete="title"
-            autoFocus
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          {/* <Typography
-            fontStyle="italic"
-            variant="caption"
-            display="block"
-            color="error"
-            gutterBottom={true}
-          >
-            caption text
-          </Typography>{' '} */}
-          <Editor
-            content={content}
-            handleChange={handleEditorChange}
-            placeholder="Put your content here.... (without main title)"
-          />
-          <FormControl className={classes.formControl}>
-            <InputLabel id="demo-mutiple-chip-label">Tags</InputLabel>
-            <Select
-              labelId="demo-mutiple-chip-label"
-              id="demo-mutiple-chip"
-              multiple
-              value={tags}
-              onChange={handleChange}
-              input={<Input id="select-multiple-chip" />}
-              renderValue={(selected) => (
-                <div className={classes.chips}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} className={classes.chip} />
-                  ))}
-                </div>
-              )}
-              MenuProps={MenuProps}
-            >
-              {names.map((name) => (
-                <MenuItem key={name} value={name} style={getStyles(name, tags, theme)}>
-                  {name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Container justify="center" maxWidth="xs">
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Submit
-            </Button>
-          </Container>
-        </form>
-      </div>
+        <Editor
+          holder="editor-container"
+          placeholder={'Tell your Story...'}
+          tools={EDITOR_JS_TOOLS}
+          // reinitializeOnPropsChange={true}
+          editorInstance={(editorInstance) => {
+            editor = editorInstance;
+          }}
+          minHeight="100"
+          logLevel= 'ERROR'
+        />
+      </Paper>
+      <Grid container direction="column" justify="center" alignItems="center">
+        <Button onClick={(e) => onSave(e)} variant="contained" color="primary">
+          Save
+        </Button>{' '}
+      </Grid>
     </Container>
   );
 };

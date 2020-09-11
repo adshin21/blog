@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BlogPostPage from '../pages/BlogPostPage';
-import SimpleList from '../components/Recommendation';
+import Recommendation from '../components/Recommendation';
 import { 
   Container,
   Grid,
@@ -20,7 +20,7 @@ const BlogPost = () => {
           <Typography variant="h5" component="h3" color="textPrimary">
             Related Article:{' '}
           </Typography>
-            <SimpleList tags={post.tags} slug={post.slug} />
+            <Recommendation tags={post.tags} slug={post.slug} />
         </Grid>
       </Container>
     </>
