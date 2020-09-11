@@ -30,6 +30,7 @@ export const EDITOR_JS_TOOLS = {
     class: Table,
     inlineToolbar: true,
   },
+  gist: Gist,
   delimiter: {
     class: Delimiter,
   },
@@ -46,5 +47,4 @@ export const EDITOR_JS_TOOLS = {
     shortcut: 'CMD+SHIFT+M',
   },
   underline: Underline,
-  gist: Gist,
 };

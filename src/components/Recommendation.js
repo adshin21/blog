@@ -16,7 +16,7 @@ const ListItemLink = (props) => {
   return <ListItem button component="a" {...props} />;
 };
 
-const SimpleList = ({ tags = [], slug = '' }) => {
+const Recommendation = ({ tags = [], slug = '' }) => {
   const classes = useStyles();
   const [spost, setSPost] = useState([]);
 
@@ -39,17 +39,17 @@ const SimpleList = ({ tags = [], slug = '' }) => {
     <div className={classes.root}>
       {spost &&
         spost.map((e, id) => (
-          <>
+          <div key={Math.random()}>
             <List key={id} component="nav" aria-label="main mailbox folders">
               <ListItemLink href={`/blogpost/${e.slug}`}>
                 <ListItemText primary={e.title} />
               </ListItemLink>
             </List>
             <Divider />
-          </>
+          </div>
         ))}
     </div>
   );
 };
 
-export default SimpleList;
+export default Recommendation;

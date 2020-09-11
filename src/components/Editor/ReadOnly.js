@@ -39,7 +39,7 @@ const ReadOnly = ({ data }) => {
               height={data.height}
               allowFullScreen
             ></iframe>
-            <div className>{data.caption}</div>
+            <div className="embed-tool__caption">{data.caption}</div>
           </div>
         );
         break;
@@ -58,7 +58,7 @@ const ReadOnly = ({ data }) => {
           <div className="cdx-block image-tool image-tool--filled">
             <div className="image-tool__image">
               <img className="image-tool__image-picture" src={data.file.url} alt="Cool pix"></img>
-              <span style={{ textAlign: 'right', marginBottom: '5px' }}>{data.caption}</span>
+              <span className="embed-tool__caption" style={{ textAlign: 'right', marginBottom: '5px' }}>{data.caption}</span>
             </div>
           </div>
         );
@@ -75,7 +75,7 @@ const ReadOnly = ({ data }) => {
               style={{ width: "100%", height: data.height }}
             >
             </iframe>
-            <div style={{ textAlign: 'center', marginTop: '-25px' }}>{data.caption}</div>
+            <div className="embed-tool__caption" style={{ textAlign: 'center', marginTop: '-25px' }}>{data.caption}</div>
           </div>
         );
         break;
@@ -110,7 +110,6 @@ const ReadOnly = ({ data }) => {
             </div>
           </div>
         )
-        console.log(content)
         break;
       default:
         content = <div className="ce-paragraph cdx-block"> {parser(`${data.text}`)} </div>;

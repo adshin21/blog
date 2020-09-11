@@ -61,7 +61,9 @@ const Editor = (props) => {
 
   useEffect(() => {
     initEditor();
-    return () => destroyEditor();
+    return () => {
+      destroyEditor();
+    }
   } , []); // eslint-disable-line 
 
   useEffect(() => {

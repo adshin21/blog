@@ -22,4 +22,4 @@ yarn-error.log*
 
 # conf
 .vscode/
-
+package-lock.json*

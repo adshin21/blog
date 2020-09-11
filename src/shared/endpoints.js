@@ -53,3 +53,8 @@ export const getSocialToken = async (form) => {
   const res = await api.post('users/social/token/', form);
   return { data: res.data, status: res.status };
 }
+
+export const getAllTags = async () => {
+  const res = await api.get('posts/tags/');
+  return { data: res.data, status: res.status };
+}
