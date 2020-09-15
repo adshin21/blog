@@ -14,9 +14,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const CreateMultiselect = () =>  {
+const CreateMultiselect = (props) =>  {
   
-  let [value, setValue] = useState([]);
+  const { tags, setTags } = props;
   const [allTags, setAllTags] = useState([]);
   const [busy, setBusy] = useState(false);
 
@@ -43,7 +43,7 @@ const CreateMultiselect = () =>  {
       id: allTags.length + 1
     }
 
-    setValue([...value, newOption]);
+    setTags([...tags, newOption]);
     setAllTags([...allTags, newOption]);
   }
   
@@ -52,11 +52,11 @@ const CreateMultiselect = () =>  {
     <Multiselect 
       className={classes.root}
       data={allTags}
-      value={value}
+      value={tags}
       busy={busy}
       allowCreate="onFilter"
       onCreate={name => handleCreate(name.trim())}
-      onChange={value => setValue(value)}
+      onChange={value => setTags(value)}
       textField="name"
       placeholder={'Select or create some tags related your post'}
     />

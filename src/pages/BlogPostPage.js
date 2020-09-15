@@ -12,9 +12,12 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(8),
     margin: theme.spacing(4),
+    fontSize: '1.1rem',
   },
-  secondaryTail: {
-    backgroundColor: theme.palette.secondary.main,
+  details: {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    width: 'inherit'
   },
   tag: {
     display: 'flex',
@@ -22,9 +25,6 @@ const useStyles = makeStyles((theme) => ({
   },
   chip: {
     marginLeft: '8px',
-  },
-  content: {
-    fontSize: '18px',
   },
 }));
 
@@ -47,27 +47,27 @@ const BlogPostPage = ({ params, setParentPost }) => {
   return (
     <>
       <CssBaseline />
-      <Grid container>
+      <Grid container direction="row" justify="center">
         <Typography variant="h3" component="h3">
           {post.title}
         </Typography>
-      </Grid>
-      <div style={{ display: 'none' }}>
-        <EditorJs minHeight="0" tools={EDITOR_JS_TOOLS}/>
-      </div>
-      <Grid container direction="row" justify="space-between" className={classes.footer}>
+        <Grid container direction="row" justify="space-around" className={classes.details}>
         <Grid item>
           <Typography variant="subtitle2" color="textSecondary">
             {`created at: ${moment(published_at).fromNow()}`}
           </Typography>
         </Grid>
-        <Grid item style={{ overflow: 'hidden' }}>
+        <Grid item style={{ overflow: 'hidden'  }}>
           <Typography variant="subtitle2" color="textSecondary">
             {`written by: ${post.author}`}
           </Typography>
         </Grid>
       </Grid>
-
+      </Grid>
+      
+      <div style={{ display: 'none' }}>
+        <EditorJs minHeight="0" tools={EDITOR_JS_TOOLS}/>
+      </div>
       <Paper elevation={1} className={classes.paper}>
         <div
           id="editor-container"

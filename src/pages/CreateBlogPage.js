@@ -7,6 +7,7 @@ import {
   Grid,
   Backdrop,
   CircularProgress,
+  CssBaseline
 } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,8 +16,7 @@ import { EDITOR_JS_TOOLS } from '../components/Editor/constants';
 import { postBlog } from '../shared/endpoints';
 import TransitionsModal from '../components/TransitionsModal';
 import { history } from '../App';
-import CreateMultiSelect from '../components/SelectTag'; // eslint-disable-line
-
+import CreateMultiSelect from '../components/SelectTag';
 import { useSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     marginBottom: theme.spacing(2),
-    fontSize: '1.0rem',
+    fontSize: '1.1rem',
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
@@ -37,8 +37,10 @@ const useStyles = makeStyles((theme) => ({
 const CreateBlogPage = () => {
 
   let editor = useRef(null);
-  let [backdrop, setBackDrop] = useState(false);
-  let [modal, setModal] = useState(false);
+  const [tags, setTags] = useState([]);
+  const [editorData, setEditorData] = useState();
+  const [backdrop, setBackDrop] = useState(false);
+  const [modal, setModal] = useState(false);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   
@@ -67,28 +69,26 @@ const CreateBlogPage = () => {
     return { status: "true", title , content };
   }
 
-  const onReady = async () => {
-    // https://editorjs.io/configuration#editor-modifications-callback
-    await editor.isReady;
-    console.log('Editor.js is ready to work!');
+  const checkTags = (data) => {
+    if(data.length === 0)
+      return { c_status: "false", categories: '' };
+    return { c_status: "true", categories: data.map(e => ({ "name": e.name })) };
+  }
+
+  const onChange = async () => {
+    const data = await editor.save();
+    setEditorData(data);
   };
 
-  // const onChange = () => {
-    // https://editorjs.io/configuration#editor-modifications-callback
-    // console.log("Now I know that Editor's content changed!");
-  // };
-
-
   const onSave = async (e) => {
-    // https://editorjs.io/saving-data
     try {
-      const outputData = await editor.save();
+      // const outputData = await editor.save();
+      const outputData = editorData;
       e.persist();
 
 
       const { status, title, content } = fetchTitleContent(outputData);
       
-
       if(status === "false"){
         enqueueSnackbar("You should provide a heading or a paragraph for title", {
           variant: "error",
@@ -102,15 +102,29 @@ const CreateBlogPage = () => {
         return;
       }
 
+      const { c_status, categories } = checkTags(tags);
+
+      if(c_status === "false"){
+        enqueueSnackbar("You should provide at least one tags", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'right'
+          },
+          autoHideDuration: 8000,
+          action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+        });
+        return;
+      }
 
       let form = {
         title: title,
         content: content,
-        tags: [{ "name": "random" }]
+        tags: categories,
       };
 
-
       const res = await postBlog(form);
+      
       if (res.status === 201) {
         setBackDrop(false);
         enqueueSnackbar("Hurray!! Post Created", {
@@ -123,11 +137,13 @@ const CreateBlogPage = () => {
           action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
         });
         history.push(`/blogpost/${res.data.slug}`);
-      } else {
+      } 
+      else {
         setBackDrop(false);
         setModal(true);
       }
-    } catch (e) {
+    } 
+    catch (e) {
       console.log('Saving failed: ', e);
     }
   };
@@ -155,14 +171,16 @@ const CreateBlogPage = () => {
           holder="editor-container"
           placeholder={'Tell your Story...'}
           tools={EDITOR_JS_TOOLS}
-          // reinitializeOnPropsChange={true}
           editorInstance={(editorInstance) => {
             editor = editorInstance;
           }}
           minHeight="100"
-          logLevel= 'ERROR'
+          logLevel="ERROR"
+          onChange={onChange}
         />
       </Paper>
+      <CssBaseline />
+      <CreateMultiSelect tags={tags} setTags={setTags} />
       <Grid container direction="column" justify="center" alignItems="center">
         <Button onClick={(e) => onSave(e)} variant="contained" color="primary">
           Save

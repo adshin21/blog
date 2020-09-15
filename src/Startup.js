@@ -24,7 +24,7 @@ const Startup = (props) => {
           });
         } catch (error) {
           try {
-            const data = jwt.verify(refresh_token, process.env.REACT_APP_VERIFYING_KEY);
+            const data = jwt.verify(refresh_token, process.env.REACT_APP_VERIFYING_KEY); // eslint-disable-line
             Cookies.remove('__access_token');
 
             axios
@@ -61,7 +61,7 @@ const Startup = (props) => {
       }
     };
     authenticate();
-  }, []);
+  }, []); // eslint-disable-line
 
   return <>{props.children}</>;
 };

@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux';
 
 const Authenticated = ({ comp: Component, ...rest}) => {
   const userState = useSelector(state => state);
-  const loading = userState.authData.loading;
+  const loaded = userState.authData.loaded;
   const isAuthenticated = userState.authData.auth === true;
 
-  if(loading === false)
+  if(loaded === false)
     return <></>;
   return (
     <Route {...rest} render={ props=> (

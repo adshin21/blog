@@ -10,7 +10,8 @@ import Authenticated from './components/Authenticated';
 export const history = createBrowserHistory();
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
-const CreatePage = React.lazy(() => import('./pages/CreateBlogPage'));
+const CreateBlogPage = React.lazy(() => import('./pages/CreateBlogPage'));
+const UserPage = React.lazy(() => import('./pages/UserPage'));
 const BlogPost = React.lazy(() => import('./components/BlogPost'));
 
 const App = () => {
@@ -21,11 +22,12 @@ const App = () => {
         <Route exact path="/signup" component={SignUpPage} />
 
         <MainLayout>
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={<CircularProgress style={{ margin: 'auto', top: 'auto' }}/>}>
             <Route exact path="/"><Redirect to='/posts/page/1' /></Route>
-            <Authenticated exact path="/create" comp={CreatePage} />
+            <Authenticated exact path="/create" comp={CreateBlogPage} />
             <Route exact path="/blogpost/:slug" component={BlogPost} />
             <Route exact path="/posts/page/:pagenumber" component={HomePage} />
+            <Route exact path="/users/:username" component={UserPage} />
           </Suspense>
         </MainLayout>
         <Route path="*"><Redirect to='/posts/page/1' /></Route>

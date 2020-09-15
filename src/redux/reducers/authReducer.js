@@ -7,7 +7,7 @@ import {
 const initialState = {
   user: {},
   auth: false,
-  loading: false,
+  loaded: false,
 };
 
 
@@ -18,14 +18,14 @@ export default (state = initialState, action) => {
         ...state,
         auth: true,
         user: action.user,
-        loading: true,
+        loaded: true,
       };
 
     case LOGGED_OUT:
       return {
         ...state,
         auth: false,
-        loading: true,
+        loaded: true,
         user: {}
       }
     default:

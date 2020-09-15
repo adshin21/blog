@@ -189,7 +189,7 @@ const LogIn = () => {
       }
     };
     getCode();
-  }, []);
+  }, []); // eslint-disable-line
 
   const responseGoogle = async (response) => {
     setBackDrop(true);

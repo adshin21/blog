@@ -43,7 +43,7 @@ const ReadOnly = ({ data }) => {
               height={data.height}
               allowFullScreen
             ></iframe>
-            <div className="embed-tool__caption">{sanatize(data.caption)}</div>
+            <div className="embed-tool__caption" style={{ opacity: 0.55 }}>{sanatize(data.caption)}</div>
           </div>
         );
         break;
@@ -79,7 +79,7 @@ const ReadOnly = ({ data }) => {
               style={{ width: "100%", height: data.height }}
             >
             </iframe>
-            <div className="embed-tool__caption" style={{ textAlign: 'center' }}>{sanatize(data.caption)}</div>
+            <div className="embed-tool__caption" style={{ textAlign: 'center', opacity: 0.55 }}>{sanatize(data.caption)}</div>
           </div>
         );
         break;

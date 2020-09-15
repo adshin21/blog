@@ -23,7 +23,7 @@ const HomePage = () => {
       window.scrollTo(0,0);
     };
     fetchData();
-  }, [params.pagenumber]);
+  }, [params.pagenumber]); // eslint-disable-line
 
   const handleChange =  (event , value) => {
     event.preventDefault();

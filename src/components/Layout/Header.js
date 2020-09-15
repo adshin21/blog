@@ -19,11 +19,9 @@ import {
 
 import { 
   useSelector, 
-  useDispatch,
 } from 'react-redux';
 
-import { logout } from '../../redux/actions/authActions';
-import { LOGGED_OUT } from '../../redux/actions/types';
+import UserOptionsCard from '../Cards/UserOptionsCard';
 
 import {
   MoreVert as MoreIcon,
@@ -109,7 +107,6 @@ const Header = () => {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const userState = useSelector((state) => state);
-  const dispatch = useDispatch();
 
   // const preventDefault = (event) => event.preventDefault();
   const handleMobileMenuClose = () => {
@@ -182,7 +179,7 @@ const Header = () => {
               style={{ fontWeight: 600 }}
               onClick={() => history.push('/create')}
             >
-              Add Article
+              ADD ARTICLE
             </Button>
             { !userState.authData.auth ? (
               <Button
@@ -192,21 +189,24 @@ const Header = () => {
               >
                 Login
               </Button>
+            
             ) : (
-              <Button
-                color="inherit"
-                style={{ fontWeight: 600 }}
-                onClick={() => {
-                  logout();
-                  dispatch({
-                    type: LOGGED_OUT
-                  });
-                  history.push('/')
-                  }
-                }
-              >
-                Log Out
-              </Button>
+              <UserOptionsCard username={userState.authData.user.user_id} history={history} />
+              
+              // <Button
+              //   color="inherit"
+              //   style={{ fontWeight: 600 }}
+              //   onClick={() => {
+              //     logout();
+              //     dispatch({
+              //       type: LOGGED_OUT
+              //     });
+              //     history.push('/')
+              //     }
+              //   }
+              // >
+              //   Log Out
+              // </Button>
             )}
           </div>
 
