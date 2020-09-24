@@ -191,22 +191,7 @@ const Header = () => {
               </Button>
             
             ) : (
-              <UserOptionsCard username={userState.authData.user.user_id} history={history} />
-              
-              // <Button
-              //   color="inherit"
-              //   style={{ fontWeight: 600 }}
-              //   onClick={() => {
-              //     logout();
-              //     dispatch({
-              //       type: LOGGED_OUT
-              //     });
-              //     history.push('/')
-              //     }
-              //   }
-              // >
-              //   Log Out
-              // </Button>
+              <UserOptionsCard username={userState?.authData?.user?.user_id} history={history} />
             )}
           </div>
 

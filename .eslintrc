@@ -1,3 +1,4 @@
 {
-  "extends": "react-app"
+  "extends": "react-app",
+  "brace-style": [2, "1tbs"]
 }

@@ -36,6 +36,7 @@ import { getSocialToken } from '../shared/endpoints';
 import useForm from '../hooks/useForm';
 import { useSnackbar } from 'notistack';
 
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -68,7 +69,6 @@ const useStyles = makeStyles((theme) => ({
 
 const LogIn = () => {
   const classes = useStyles();
-
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const onClickDismiss = (key) => () => {
@@ -76,16 +76,16 @@ const LogIn = () => {
   };
 
   const loginSuccessSnackbar = () => {
-    enqueueSnackbar("Successfully Logged In", {
-      variant: "success",
+    enqueueSnackbar('Successfully Logged In', {
+      variant: 'success',
       anchorOrigin: {
         vertical: 'top',
-        horizontal: 'center'
+        horizontal: 'center',
       },
       autoHideDuration: 3000,
-      action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+      action: (key) => <Button onClick={onClickDismiss(key)}>Got It</Button>,
     });
-  }
+  };
 
   const stateSchema = {
     username: { value: '', error: '' },
@@ -126,28 +126,25 @@ const LogIn = () => {
       setBackDrop(false);
       loginSuccessSnackbar();
       history.push('/');
-    } 
-    else {
+    } else {
       setBackDrop(false);
-      
+
       for (let res_key in res.data) {
-        if(typeof(res.data[res_key]) === "object"){
+        if (typeof res.data[res_key] === 'object') {
           for (let msg of res.data[res_key]) {
             enqueueSnackbar(msg, {
-              variant: "error",
+              variant: 'error',
               autoHideDuration: 9000,
-              action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
+              action: (key) => <Button onClick={onClickDismiss(key)}>Got It</Button>,
             });
           }
+        } else {
+          enqueueSnackbar(res.data[res_key], {
+            variant: 'error',
+            autoHideDuration: 9000,
+            action: (key) => <Button onClick={onClickDismiss(key)}>Got It</Button>,
+          });
         }
-        else{
-            enqueueSnackbar(res.data[res_key], {
-              variant: "error",
-              autoHideDuration: 9000,
-              action: key => <Button onClick={onClickDismiss(key)}>Got It</Button>
-            });
-        }
-        
       }
     }
   };
@@ -160,53 +157,63 @@ const LogIn = () => {
 
   const { username, password } = values;
 
-  let [backdrop, setBackDrop] = useState(false);
-  let [modal, setModal] = useState(false);
+  const [backdrop, setBackDrop] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [code, setCode] = useState("");
+  const [provider, setProvider] = useState('google-oauth2');
 
   const location = useLocation();
   const userState = useSelector((state) => state);
   const dispatch = useDispatch();
 
+  const doSocialAuthRes = (res) => {
+    console.log(res);
+    if (res.status === 200) {
+      dispatch({
+        type: LOGGED_IN,
+        user: jwt.decode(res.data.token, process.env.REACT_APP_VERIFYING_KEY),
+      });
+      login(res.data.token, res.data.refresh);
+      setBackDrop(false);
+      loginSuccessSnackbar();
+      history.push('/');
+    } else {
+      setBackDrop(false);
+      setModal(true);
+    }
+  };
+
   useEffect(() => {
     const getCode = async () => {
       let url_data = location.search.split('?code=');
       if (url_data.length >= 2 && url_data[1]) {
-        setBackDrop(true);
-        const res = await getSocialToken({ code: url_data[1], provider: 'github' });
-        if (res.status === 200) {
-          dispatch({
-            type: LOGGED_IN,
-            user: jwt.decode(res.data.access, process.env.REACT_APP_VERIFYING_KEY),
-          });
-          login(res.data.access, res.data.refresh);
-          setBackDrop(false);
-          loginSuccessSnackbar();
-          history.push('/');
-        } else {
-          setBackDrop(false);
-          setModal(true);
-        }
+        setCode(url_data[1]);
+        setProvider("github");
       }
     };
     getCode();
   }, []); // eslint-disable-line
 
+  useEffect(() => {
+    const doSocialAuth = async () => {
+      if(code){
+        let res;
+
+        if(provider === "google-oauth2"){
+          res = await getSocialToken({ provider, code, redirect_uri: 'postmessage' });
+        }
+        else{
+          res = await getSocialToken({ provider, code });
+        }
+        doSocialAuthRes(res);
+      }
+    };
+    doSocialAuth();
+  }, [code]);
+
   const responseGoogle = async (response) => {
-    setBackDrop(true);
-    const res = await getSocialToken({ code: response.tokenObj.access_token, provider: 'google' });
-    if (res.status === 200) {
-      dispatch({
-        type: LOGGED_IN,
-        user: jwt.decode(res.data.access, process.env.REACT_APP_VERIFYING_KEY),
-      });
-      login(res.data.access, res.data.refresh);
-      setBackDrop(false);
-      history.push('/');
-      loginSuccessSnackbar();
-    } else {
-      setBackDrop(false);
-      setModal(true);
-    }
+    setProvider("google-oauth2");
+    setCode(response.code);
   };
 
   const onFailure = (res) => {

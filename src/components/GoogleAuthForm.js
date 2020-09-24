@@ -28,6 +28,7 @@ const GoogleAuthForm = ({responseGoogle, onFailure}) => {
       onSuccess={responseGoogle}
       onFailure={onFailure}
       cookiePolicy={'single_host_origin'}
+      responseType="code"
     />
   )
 };
