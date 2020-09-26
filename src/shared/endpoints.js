@@ -55,3 +55,17 @@ export const getAllTags = async () => {
   const res = await api.get('posts/tags/');
   return { data: res.data, status: res.status };
 };
+
+export const forgotPassword = async ( form ) => {
+  const res = await api.post('auth/users/reset_password/', form);
+  return { data: res.data, status: res.status };
+}
+
+export const resetPassword = async ( form ) => {
+  try{
+    const res = await api.post('auth/users/reset_password_confirm/', form);
+    return { data: res.data, status: res.status };
+  } catch (error) {
+    return { data: error.response.data, status: error.response.status };
+  }
+}

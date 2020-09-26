@@ -15,8 +15,10 @@ const GoogleAuthForm = ({responseGoogle, onFailure}) => {
       render={
         renderProps => (
           <Button 
-              variant="contained" 
-              color="default" 
+              variant="contained"
+              fullWidth
+              color="default"
+              style={{ height: '50px', fontWeight: 800 }}
               disabled={renderProps.disabled}
               startIcon={<FcGoogle />}
               onClick={() => renderProps.onClick()}

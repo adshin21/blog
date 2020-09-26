@@ -53,18 +53,22 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(1, 0),
   },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
   },
   social: {
-    margin: theme.spacing(1.2),
+    marginTop: theme.spacing(2),
+    width: '100%',
   },
   signin: {
     alignItems: 'center',
   },
+  or: {
+    marginTop: theme.spacing(1),
+  }
 }));
 
 const LogIn = () => {
@@ -167,7 +171,6 @@ const LogIn = () => {
   const dispatch = useDispatch();
 
   const doSocialAuthRes = (res) => {
-    console.log(res);
     if (res.status === 200) {
       dispatch({
         type: LOGGED_IN,
@@ -209,7 +212,7 @@ const LogIn = () => {
       }
     };
     doSocialAuth();
-  }, [code]);
+  }, [code]); // eslint-disable-line
 
   const responseGoogle = async (response) => {
     setProvider("google-oauth2");
@@ -246,6 +249,23 @@ const LogIn = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
+
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          className={classes.social}
+        >
+          <Grid item className={classes.social}>
+            <GoogleAuthForm responseGoogle={responseGoogle} onFailure={onFailure} />
+          </Grid>
+
+          <Grid item className={classes.social}>
+            <GithubAuthForm />
+          </Grid>
+        </Grid>
+        <Typography className={classes.or} component="h3" variant="h5">Or</Typography>
         <form className={classes.form} noValidate onSubmit={handleOnSubmit}>
           <TextField
             variant="outlined"
@@ -255,8 +275,6 @@ const LogIn = () => {
             id="username"
             label="Username or Email Address"
             name="username"
-            autoComplete="username"
-            autoFocus
             value={username}
             onChange={handleOnChange}
             error={errors.username && dirty.username}
@@ -289,8 +307,8 @@ const LogIn = () => {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="/" variant="body2">
-                Go to Home
+              <Link href="/password/forgot" variant="body2">
+                Forgot Password ?
               </Link>
             </Grid>
 
@@ -301,27 +319,6 @@ const LogIn = () => {
             </Grid>
           </Grid>
         </form>
-
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.social}
-        >
-          <Grid item>
-            <Typography component="h5" variant="h5">
-              Or
-            </Typography>
-          </Grid>
-          <Grid item className={classes.social}>
-            <GoogleAuthForm responseGoogle={responseGoogle} onFailure={onFailure} />
-          </Grid>
-
-          <Grid item className={classes.social}>
-            <GithubAuthForm />
-          </Grid>
-        </Grid>
       </div>
       <Box mt={8}>
         <Copyright />

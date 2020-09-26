@@ -6,6 +6,8 @@ import { CircularProgress } from '@material-ui/core';
 
 import LogInPage from './pages/LogInPage';
 import SignUpPage from './pages/SignUpPage';  
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import Authenticated from './components/Authenticated';
 export const history = createBrowserHistory();
 
@@ -20,7 +22,8 @@ const App = () => {
       <Switch>
         <Route exact path="/login" component={LogInPage} />
         <Route exact path="/signup" component={SignUpPage} />
-
+        <Route exact path="/password/forgot" component={ForgotPasswordPage} />
+        <Route exact path="/password/reset/confirm/:uid/:token" component={ResetPasswordPage} />
         <MainLayout>
           <Suspense fallback={<CircularProgress style={{ margin: 'auto', top: 'auto' }}/>}>
             <Route exact path="/"><Redirect to='/posts/page/1' /></Route>

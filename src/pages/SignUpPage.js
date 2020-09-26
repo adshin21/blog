@@ -79,13 +79,13 @@ const SignUpPage = () => {
       required: true,
       validator: {
         func: value => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value),
-        error: "Invalid email format."
+        error: "Invalid email."
       }
     },
     password: {
       required: true,
       validator: {
-        func: value => /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/.test(value),
+        func: value => /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/.test(value),
         error: "Invalid password. It should consists characters, numbers and special character and minimum length should be 6"
       }
     },
