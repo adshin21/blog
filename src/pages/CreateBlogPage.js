@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Editor from '../components/Editor/_Editor';
 import { 
   Container, 
@@ -33,6 +33,16 @@ const useStyles = makeStyles((theme) => ({
     color: '#fff',
   },
 }));
+
+
+const debounce = (fn, delay) => {
+  let timeoutId;
+  return function (...args) {
+    clearInterval(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
 
 const CreateBlogPage = () => {
 
@@ -75,10 +85,21 @@ const CreateBlogPage = () => {
     return { c_status: "true", categories: data.map(e => ({ "name": e.name })) };
   }
 
-  const onChange = async () => {
+  const editorDataSave = async () => {
     const data = await editor.save();
-    setEditorData(data);
+    return data;
+  }
+
+  const onChange = () => {
+    debounceCallback();
   };
+
+  const debounceCallback = useCallback(
+    debounce(() => {
+      setEditorData(editorDataSave());
+    }, 500),
+    []
+  );
 
   const onSave = async (e) => {
     try {

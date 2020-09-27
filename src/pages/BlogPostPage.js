@@ -7,6 +7,7 @@ import moment from 'moment';
 import ReadOnly from '../components/Editor/ReadOnly';
 import EditorJs from '../components/Editor/_Editor';
 import { EDITOR_JS_TOOLS } from '../components/Editor/constants';
+import TagChip from '../components/TagChip';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -17,15 +18,18 @@ const useStyles = makeStyles((theme) => ({
   details: {
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
-    width: 'inherit'
+    width: 'inherit',
   },
   tag: {
     display: 'flex',
     flexDirection: 'row',
+    // marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
-  chip: {
-    marginLeft: '8px',
-  },
+  typorgrahpy: {
+    margin: 'auto',
+    marginRight: 'inherit',
+  }
 }));
 
 const BlogPostPage = ({ params, setParentPost }) => {
@@ -47,26 +51,26 @@ const BlogPostPage = ({ params, setParentPost }) => {
   return (
     <>
       <CssBaseline />
-      <Grid container direction="row" justify="center">
-        <Typography variant="h3" component="h3">
-          {post.title}
-        </Typography>
-        <Grid container direction="row" justify="space-around" className={classes.details}>
+      <Grid container direction="column" justify="center" alignItems="center">
         <Grid item>
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography variant="h3" component="h3" align="center" gutterBottom>
+            {post.title}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="subtitle1" align="center">
             {`created at: ${moment(published_at).fromNow()}`}
           </Typography>
         </Grid>
-        <Grid item style={{ overflow: 'hidden'  }}>
-          <Typography variant="subtitle2" color="textSecondary">
+        <Grid item style={{ overflow: 'hidden' }}>
+          <Typography variant="subtitle1" align="center">
             {`written by: ${post.author}`}
           </Typography>
         </Grid>
       </Grid>
-      </Grid>
-      
+
       <div style={{ display: 'none' }}>
-        <EditorJs minHeight="0" tools={EDITOR_JS_TOOLS}/>
+        <EditorJs minHeight="0" tools={EDITOR_JS_TOOLS} />
       </div>
       <Paper elevation={1} className={classes.paper}>
         <div
@@ -89,21 +93,13 @@ const BlogPostPage = ({ params, setParentPost }) => {
       <Grid container direction="column" justify="center" alignItems="flex-start">
         <Grid item>
           <div className={classes.tag}>
-            <Typography variant="h5" component="h3" color="textPrimary">
-              Tags:{' '}
+            <Typography variant="h5" component="h3" color="textPrimary" className={classes.typorgrahpy}>
+              Tags: {' '}
             </Typography>
-            {tags &&
-              tags.map((e, id) => (
-                <Typography
-                  variant="h5"
-                  component="h3"
-                  color="textSecondary"
-                  className={classes.chip}
-                  key={'tag' + id}
-                >
-                  {e.name}{' '}
-                </Typography>
-              ))}
+
+            <TagChip
+              tags={tags}
+            />
           </div>
         </Grid>
       </Grid>

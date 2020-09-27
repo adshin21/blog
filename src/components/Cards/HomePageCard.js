@@ -8,10 +8,9 @@ import {
   CardContent,
   Typography,
 } from '@material-ui/core';
-
 import moment from 'moment';
-
 import { history } from '../../App';
+import TagChip from '../TagChip';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,11 +40,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '10px',
   },
   tag: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  chip: {
-    margin: theme.spacing(0.25),
+    marginTop: theme.spacing(0.5)
   },
 }));
 
@@ -64,13 +59,7 @@ const HomePageCard = ({ title, slug, tag = [], date, author = 'anonymous' }) => 
               </Typography>
             </CardActionArea>
 
-            <div className={classes.tag}>
-              {tag.map((e, id) => (
-                <Typography variant="subtitle2" color="textSecondary" className={classes.chip} key={"tag" + id}>
-                  {e.name}
-                </Typography>
-              ))}
-            </div>
+            <TagChip tags={tag} small={true} className={classes.tag}/>
           </CardContent>
 
           <Grid container direction="row" justify="space-between" className={classes.footer}>
