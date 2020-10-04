@@ -39,7 +39,7 @@ const debounce = (fn, delay) => {
   let timeoutId;
   return function (...args) {
     clearInterval(timeoutId);
-    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+    timeoutId = setTimeout(async () => await fn.apply(this, args), delay);
   };
 }
 
@@ -58,7 +58,8 @@ const CreateBlogPage = () => {
     closeSnackbar(key);
   };
 
-  const fetchTitleContent = (data) => {
+  const fetchTitleContent = (edata) => {
+    let data = JSON.parse(JSON.stringify(edata));
     let slice_index = -1;
     for(let block_id in data.blocks){
       const type = data.blocks[block_id].type;
@@ -76,6 +77,7 @@ const CreateBlogPage = () => {
     let heading = data.blocks.splice(slice_index, 1);
     let title = heading[0].data.text;
     let content = data;
+
     return { status: "true", title , content };
   }
 
@@ -104,7 +106,7 @@ const CreateBlogPage = () => {
   const onSave = async (e) => {
     try {
       // const outputData = await editor.save();
-      const outputData = editorData;
+      const outputData = await editorData;
       e.persist();
 
 

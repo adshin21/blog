@@ -8,6 +8,7 @@ import Code from '@editorjs/code';
 import Marker from '@editorjs/marker';
 import InlineCode from '@editorjs/inline-code';
 import Underline from '@editorjs/underline';
+import ImageTool from '@editorjs/image';
 import Gist from 'editorjs-github-gist-plugin';
 
 export const EDITOR_JS_TOOLS = {
@@ -25,6 +26,15 @@ export const EDITOR_JS_TOOLS = {
   code: { 
     class: Code,
     inlineToolbar: true, 
+  },
+  image: {
+    class: ImageTool,
+    config: {
+      endpoints: {
+        byFile: process.env.REACT_APP_API_URL + 'posts/image/uplaod/',
+        byUrl: process.env.REACT_APP_API_URL + 'posts/image/uplaod/'
+      }
+    }
   },
   table: {
     class: Table,
