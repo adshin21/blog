@@ -31,8 +31,8 @@ export const EDITOR_JS_TOOLS = {
     class: ImageTool,
     config: {
       endpoints: {
-        byFile: process.env.REACT_APP_API_URL + 'posts/image/uplaod/',
-        byUrl: process.env.REACT_APP_API_URL + 'posts/image/uplaod/'
+        byFile: process.env.REACT_APP_API_URL + 'posts/image/upload/',
+        byUrl: process.env.REACT_APP_API_URL + 'posts/image/upload/'
       }
     }
   },
