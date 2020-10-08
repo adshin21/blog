@@ -10,6 +10,7 @@ import InlineCode from '@editorjs/inline-code';
 import Underline from '@editorjs/underline';
 import ImageTool from '@editorjs/image';
 import Gist from 'editorjs-github-gist-plugin';
+import Cookies from 'js-cookie';
 
 export const EDITOR_JS_TOOLS = {
   paragraph: {
@@ -33,6 +34,9 @@ export const EDITOR_JS_TOOLS = {
       endpoints: {
         byFile: process.env.REACT_APP_API_URL + 'posts/image/upload/',
         byUrl: process.env.REACT_APP_API_URL + 'posts/image/upload/'
+      },
+      additionalRequestHeaders: {
+        Authorization: `Bearer ${Cookies.get('__access_token')}`
       }
     }
   },
